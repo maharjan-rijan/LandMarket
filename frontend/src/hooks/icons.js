@@ -1,0 +1,34 @@
+// One place for icons. If an icon name ever changes in react-icons,
+// fix it here and every page keeps working.
+export {
+  HiOutlineSearch as SearchIcon,
+  HiOutlineLocationMarker as PinIcon,
+  HiOutlineHeart as HeartIcon,
+  HiHeart as HeartSolidIcon,
+  HiOutlineMenu as MenuIcon,
+  HiOutlineX as CloseIcon,
+  HiOutlineEye as EyeIcon,
+  HiOutlineEyeOff as EyeOffIcon,
+  HiBadgeCheck as VerifiedIcon,
+  HiOutlineCheckCircle as CheckIcon,
+  HiOutlineHome as HomeIcon,
+  HiOutlineViewGrid as GridIcon,
+  HiOutlineCollection as ListingsIcon,
+  HiOutlinePlus as PlusIcon,
+  HiOutlineInbox as InboxIcon,
+  HiOutlineClipboardList as DemandIcon,
+  HiOutlineOfficeBuilding as StoreIcon,
+  HiOutlineBookmark as BookmarkIcon,
+  HiOutlineDocumentText as DocIcon,
+  HiOutlineLogout as LogoutIcon,
+  HiOutlinePhone as PhoneIcon,
+  HiOutlineTrash as TrashIcon,
+  HiOutlineShieldCheck as ShieldIcon,
+  HiOutlineSwitchHorizontal as ConvertIcon,
+  HiOutlineClock as ClockIcon,
+  HiOutlineUserGroup as PeopleIcon,
+  HiOutlineChartBar as ChartIcon,
+  HiOutlineChevronDown as ChevronDownIcon 
+} from "react-icons/hi";
+
+export { HiOutlineUser as UserIcon, HiOutlineLockClosed as LockIcon } from "react-icons/hi";
