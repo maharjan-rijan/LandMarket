@@ -216,18 +216,19 @@ class DatabaseSeeder extends Seeder
         // The sold plot: record the sale to a buyer so it shows under "Purchases"
         $buyer = $buyers['ram'];
         $sold  = $lands['kirti'];
-        $this->transfer($sold, $sellers['himal']['store']->name, $buyer->name, now()->subDays(40)->toDateString(), 'Sold through LandMarket');
+        $this->transfer($sold, $sellers['himal']['store']->name, $buyer->name, now()->subDays(40)->toDateString(), 'Sold through LandMarket', (string) $buyer->id);
         $sold->update(['sold_to' => $buyer->id, 'sold_at' => now()->subDays(40)->toDateString()]);
 
         return $lands;
     }
 
-    private function transfer(Land $land, ?string $from, string $to, string $date, string $note): void
+    private function transfer(Land $land, ?string $from, string $to, string $date, string $note, ?string $toUserId = null): void
     {
         OwnershipTransfer::create([
             'land_id'    => $land->id,
             'from_owner' => $from,
             'to_owner'   => $to,
+            'to_user_id' => $toUserId,
             'date'       => $date,
             'note'       => $note,
             'seeded'     => true,

@@ -14,6 +14,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -23,7 +24,7 @@ use Illuminate\Validation\ValidationException;
  *
  *   summary
  *   lands, createLand, showLand, updateLand, setLandStatus, deleteLand
- *   inquiries, updateInquiry, demands
+ *   inquiries, updateInquiry, replyInquiry, demands
  *   showStore, updateStore
  */
 class SellController extends Controller
@@ -148,11 +149,13 @@ class SellController extends Controller
 
             if ($buyerName) {
                 OwnershipTransfer::create([
-                    'land_id'    => (string) $land->getKey(),
-                    'from_owner' => $request->user()->name,
-                    'to_owner'   => $buyerName,
-                    'date'       => now()->toDateString(),
-                    'note'       => 'Sold through LandMarket',
+                    'land_id'      => (string) $land->getKey(),
+                    'from_owner'   => $request->user()->name,
+                    'from_user_id' => (string) $request->user()->getKey(),
+                    'to_owner'     => $buyerName,
+                    'to_user_id'   => $buyer ? (string) $buyer->getKey() : null,
+                    'date'         => now()->toDateString(),
+                    'note'         => 'Sold through LandMarket',
                 ]);
             }
         }
@@ -210,6 +213,37 @@ class SellController extends Controller
         $inquiry->save();
 
         return response()->json($this->shape($inquiry));
+    }
+
+    /**
+     * POST /seller/inquiries/{inquiry}/replies  { message }
+     * The reply is saved on the inquiry, so the buyer sees it under their own message in
+     * "My inquiries". Sending a reply marks the inquiry as replied.
+     */
+    public function replyInquiry(Request $request, Inquiry $inquiry): JsonResponse
+    {
+        abort_unless(
+            $inquiry->store_id === (string) $this->ownStore($request)->getKey(),
+            403,
+            'This inquiry belongs to another seller.'
+        );
+        abort_if($inquiry->status === 'closed', 422, 'This inquiry is closed.');
+
+        $data = $request->validate(['message' => ['required', 'string', 'min:2', 'max:2000']]);
+
+        $replies = $inquiry->replies ?? [];
+        $replies[] = [
+            'id'         => (string) Str::uuid(),
+            'from'       => 'seller',
+            'message'    => trim($data['message']),
+            'created_at' => now()->toIso8601String(),
+        ];
+
+        $inquiry->replies = $replies;
+        $inquiry->status = 'replied';
+        $inquiry->save();
+
+        return response()->json($this->shape($inquiry), 201);
     }
 
     /** GET /seller/demands  (open demands from every buyer; the app works out which lands match) */

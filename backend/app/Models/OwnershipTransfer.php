@@ -10,6 +10,13 @@ class OwnershipTransfer extends Model
     protected $collection = 'ownership_transfers';
 
     protected $fillable = [
-        'land_id', 'from_owner', 'to_owner', 'date', 'note', 'seeded',
+        'land_id',
+        'from_owner',
+        'from_user_id',
+        'to_owner',
+        'to_user_id',
+        'date',
+        'note',
+        'seeded',
     ];
 }

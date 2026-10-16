@@ -50,6 +50,13 @@ export const mapInquiry = (i) => ({
   message: i.message,
   status: i.status,
   createdAt: i.created_at,
+  // the seller's replies, oldest first
+  replies: (i.replies ?? []).map((r) => ({
+    id: r.id,
+    from: r.from,
+    message: r.message,
+    createdAt: r.created_at,
+  })),
 });
 
 export const mapDemand = (d) => ({
@@ -78,6 +85,9 @@ export const mapPurchase = (p, buyerId) => ({
   id: p.id,
   landId: p.land ? id(p.land) : undefined,
   buyerId,
-  date: p.date,
+  date: p.date, // the day this buyer got the land
   price: p.price,
+  owned: p.owned !== false, // false once they have sold it on
+  soldToName: p.sold_to_name ?? undefined,
+  resoldAt: p.resold_at ?? undefined,
 });

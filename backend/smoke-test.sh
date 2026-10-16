@@ -67,6 +67,7 @@ has "the new listing is in the admin's list" "$LAND"
 
 echo; echo "Buyer"
 check "POST /lands/{id}/inquiries" 201 POST "/lands/$LAND/inquiries" "$BUYER" '{"message":"Is this plot still available?"}'
+INQ=$(grep -o '"id":"[^"]*"' "$TMP" | head -1 | cut -d'"' -f4)
 check "GET /buyer/inquiries" 200 GET /buyer/inquiries "$BUYER"
 check "POST /buyer/saved/{id}" 201 POST "/buyer/saved/$LAND" "$BUYER"
 check "GET /buyer/saved" 200 GET /buyer/saved "$BUYER"
@@ -79,6 +80,14 @@ check "GET /seller/inquiries" 200 GET /seller/inquiries "$SELLER"
 has "the buyer's inquiry is in the seller's inbox" "Is this plot still available"
 check "GET /seller/store" 200 GET /seller/store "$SELLER"
 check "GET /seller/demands" 200 GET /seller/demands "$SELLER"
+
+echo; echo "Seller replies, buyer reads it"
+check "an empty reply is refused" 422 POST "/seller/inquiries/$INQ/replies" "$SELLER" '{"message":""}'
+check "POST /seller/inquiries/{id}/replies" 201 POST "/seller/inquiries/$INQ/replies" "$SELLER" '{"message":"Yes, it is still available. When can you visit?"}'
+has "the inquiry is now marked replied" '"status":"replied"'
+check "GET /buyer/inquiries after the reply" 200 GET /buyer/inquiries "$BUYER"
+has "the buyer sees the seller's reply" "When can you visit"
+check "a buyer cannot use the seller reply endpoint" 403 POST "/seller/inquiries/$INQ/replies" "$BUYER" '{"message":"I am a buyer"}'
 
 echo; echo "A new registration shows up for the admin"
 EMAIL="smoke$(date +%s)@example.com"
@@ -94,6 +103,23 @@ check "buyer cannot open /admin/users" 403 GET /admin/users "$BUYER"
 check "buyer cannot open /seller/lands" 403 GET /seller/lands "$BUYER"
 check "seller cannot open /admin/lands" 403 GET /admin/lands "$SELLER"
 check "seller cannot send an inquiry" 403 POST "/lands/$LAND/inquiries" "$SELLER" '{"message":"Trying as a seller"}'
+
+echo; echo "A buyer buys the land, then sells it on"
+check "seller marks the land sold to the buyer" 200 PATCH "/seller/lands/$LAND/status" "$SELLER" \
+  '{"status":"sold","buyer_name":"Ram Karki","buyer_email":"ram@landmarket.test"}'
+check "GET /buyer/purchases" 200 GET /buyer/purchases "$BUYER"
+has "the bought land is in the buyer's purchases" "$LAND"
+has "and the buyer owns it" '"owned":true'
+check "buyer cannot resell without a new owner's name" 422 POST "/buyer/purchases/$LAND/resell" "$BUYER" '{"buyer_name":""}'
+check "buyer sells it on" 200 POST "/buyer/purchases/$LAND/resell" "$BUYER" '{"buyer_name":"Smoke New Owner"}'
+has "the purchase now shows as sold on" '"owned":false'
+has "with the new owner's name" "Smoke New Owner"
+check "GET /buyer/purchases keeps the record" 200 GET /buyer/purchases "$BUYER"
+has "the sold-on land is still in the buyer's table" "$LAND"
+check "the ownership record lists the new owner" 200 GET "/lands/$LAND"
+has "Smoke New Owner is in the ownership record" "Smoke New Owner"
+check "the old owner cannot sell it a second time" 403 POST "/buyer/purchases/$LAND/resell" "$BUYER" '{"buyer_name":"Someone Else"}'
+check "a seller cannot use the resell endpoint" 403 POST "/buyer/purchases/$LAND/resell" "$SELLER" '{"buyer_name":"Nobody"}'
 
 echo; echo "Clean up"
 check "DELETE /admin/lands/{id}" 204 DELETE "/admin/lands/$LAND" "$ADMIN"

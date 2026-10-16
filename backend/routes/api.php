@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 /* ---------------------------------------------------------------- Auth */
+
 Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->middleware('throttle:10,1')->name('register');
     Route::post('login', [AuthController::class, 'login'])->middleware('throttle:10,1')->name('login');
@@ -77,6 +78,7 @@ Route::middleware(['auth:sanctum', 'role:buyer'])->group(function () {
 
         // Lands this buyer bought, with their ownership record
         Route::get('purchases', [BuyController::class, 'purchases'])->name('purchases.index');
+        Route::post('purchases/{land}/resell', [BuyController::class, 'resellLand'])->name('purchases.resell'); // { buyer_name, buyer_email? }
     });
 });
 
@@ -96,6 +98,7 @@ Route::middleware(['auth:sanctum', 'role:seller'])->prefix('seller')->name('sell
     // Inbox for this seller's store
     Route::get('inquiries', [SellController::class, 'inquiries'])->name('inquiries.index');
     Route::patch('inquiries/{inquiry}', [SellController::class, 'updateInquiry'])->name('inquiries.update'); // { status: replied|closed }
+    Route::post('inquiries/{inquiry}/replies', [SellController::class, 'replyInquiry'])->middleware('throttle:30,1')->name('inquiries.reply'); // { message }
 
     // Open buyer demands, with how many of this seller's lands match each
     Route::get('demands', [SellController::class, 'demands'])->name('demands.index');

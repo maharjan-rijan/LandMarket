@@ -7,7 +7,7 @@ use App\Models\OwnershipTransfer;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Support\Collection;
-use MongoDB\BSON\ObjectId;
+use MongoDB\Laravel\Eloquent\Casts\ObjectId as CastsObjectId;
 
 /**
  * Small helpers shared by the controllers.
@@ -26,19 +26,31 @@ trait ApiHelpers
 
     protected function shapeAll($models): array
     {
-        return collect($models)->map(fn ($m) => $this->shape($m))->values()->all();
+        return collect($models)->map(fn($m) => $this->shape($m))->values()->all();
     }
 
-    /** Ownership record, oldest first: [{ owner, date, note }] */
-    protected function chainFor(Land $land): array
+    /** The transfers of one land, oldest first. */
+    protected function chainRows(Land $land): Collection
     {
         return OwnershipTransfer::where('land_id', (string) $land->getKey())
             ->orderBy('date')
             ->orderBy('created_at')
             ->get()
-            ->map(fn ($t) => ['owner' => $t->to_owner, 'date' => $t->date, 'note' => $t->note])
+            ->values();
+    }
+
+    /** Ownership record as the app shows it: [{ owner, date, note }] */
+    protected function formatChain(iterable $rows): array
+    {
+        return collect($rows)
+            ->map(fn($t) => ['owner' => $t->to_owner, 'date' => $t->date, 'note' => $t->note])
             ->values()
             ->all();
+    }
+
+    protected function chainFor(Land $land): array
+    {
+        return $this->formatChain($this->chainRows($land));
     }
 
     protected function landPayload(Land $land, bool $withChain = false): array
@@ -57,9 +69,9 @@ trait ApiHelpers
     {
         // Build real ObjectIds ourselves, so this works whether or not the library converts strings.
         $objectIds = collect($ids)
-            ->filter(fn ($id) => is_string($id) && preg_match('/^[a-f0-9]{24}$/i', $id))
+            ->filter(fn($id) => is_string($id) && preg_match('/^[a-f0-9]{24}$/i', $id))
             ->unique()
-            ->map(fn ($id) => new ObjectId($id))
+            ->map(fn($id) => new CastsObjectId($id))
             ->values()
             ->all();
 
@@ -67,7 +79,7 @@ trait ApiHelpers
             return collect();
         }
 
-        return Land::whereIn('_id', $objectIds)->get()->keyBy(fn ($l) => (string) $l->getKey());
+        return Land::whereIn('_id', $objectIds)->get()->keyBy(fn($l) => (string) $l->getKey());
     }
 
     protected function userId(): string

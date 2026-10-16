@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('mongodb')->table('ownership_transfers', function (Blueprint $collection) {
-            $collection->index(['land_id', 'date']);     // ownership record, oldest first
+            $collection->index(['land_id', 'date']);
+            $collection->index('to_user_id');
+            $collection->index('from_user_id');
         });
     }
 
