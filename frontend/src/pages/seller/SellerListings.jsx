@@ -4,6 +4,7 @@ import { useData } from "@/store/DataContext";
 import { formatArea, formatNprShort, totalPrice } from "@/lib/format";
 import { PATHS } from "@/routes/paths";
 import Button from "@/components/ui/Button";
+import ChipGroup from "@/components/ui/ChipGroup";
 import DropdownMenu from "@/components/ui/DropdownMenu";
 import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
@@ -104,24 +105,17 @@ export default function SellerListings() {
         />
       ) : (
         <>
-          <div
-            className="flex flex-wrap gap-2 mb-4"
-            role="group"
-            aria-label="Filter by status"
-          >
-            {FILTERS.map((f) => (
-              <button
-                key={f}
-                type="button"
-                className={`chip${filter === f ? " is-on" : ""}`}
-                aria-pressed={filter === f}
-                onClick={() => setFilter(f)}
-              >
-                {f[0].toUpperCase() + f.slice(1)}{" "}
-                <small className="num">{count(f)}</small>
-              </button>
-            ))}
-          </div>
+          <ChipGroup
+            label="Filter by status"
+            className="mb-4"
+            options={FILTERS.map((f) => ({
+              value: f,
+              label: f[0].toUpperCase() + f.slice(1),
+              count: count(f),
+            }))}
+            value={filter}
+            onChange={setFilter}
+          />
 
           <div className="table-wrap">
             <table className="table">

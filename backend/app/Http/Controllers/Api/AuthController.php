@@ -8,11 +8,14 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * Everything about the person themselves:
  *   register, login, me, logout            POST /auth/register ...
  *   updateProfile, updatePassword          PUT  /account/profile, /account/password
+ *   updateAvatar, deleteAvatar             POST|DELETE /account/avatar  (the profile picture)
  *   updateRole                             PATCH /account/role  (a "user" chooses buyer or seller, once)
  */
 class AuthController extends Controller
@@ -136,6 +139,50 @@ class AuthController extends Controller
 
         if ($data['role'] === 'seller') {
             $this->storeFor($user);
+        }
+
+        return response()->json($user->fresh());
+    }
+
+    // ---------------------------------------------------------------- profile picture
+
+    /**
+     * POST /account/avatar  (multipart form: avatar = the picture)
+     * The app sends the picture already cropped to a square, so it is small.
+     */
+    public function updateAvatar(Request $request): JsonResponse
+    {
+        $request->validate([
+            'avatar' => ['required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:2048', 'dimensions:min_width=64,min_height=64,max_width=4096,max_height=4096'],
+        ]);
+
+        $user = $request->user();
+        $old = $user->avatar_path;
+
+        // A new file name every time, so a browser never shows the old picture from its cache.
+        $file = $request->file('avatar');
+        $name = $user->getKey() . '-' . Str::lower(Str::random(10)) . '.' . ($file->guessExtension() ?: 'jpg');
+        $path = $file->storeAs('avatars', $name, 'public');
+
+        $user->avatar_path = $path;
+        $user->save();
+
+        if ($old && $old !== $path) {
+            Storage::disk('public')->delete($old);
+        }
+
+        return response()->json($user->fresh());
+    }
+
+    /** DELETE /account/avatar */
+    public function deleteAvatar(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if ($user->avatar_path) {
+            Storage::disk('public')->delete($user->avatar_path);
+            $user->avatar_path = null;
+            $user->save();
         }
 
         return response()->json($user->fresh());

@@ -4,12 +4,14 @@ import { useData } from "@/store/DataContext";
 import { formatArea, formatNprShort, timeAgo, totalPrice } from "@/lib/format";
 import { PATHS } from "@/routes/paths";
 import Button from "@/components/ui/Button";
+import ChipGroup from "@/components/ui/ChipGroup";
 import Modal from "@/components/ui/Modal";
-import { CloseIcon, SearchIcon, TrashIcon } from "@/hooks/icons";
+import { SearchIcon, TrashIcon } from "@/hooks/icons";
 import EmptyState from "@/components/common/EmptyState";
 import PageHeader from "@/components/common/PageHeader";
 import PlotShape from "@/components/land/PlotShape";
 import StatusBadge from "@/components/land/StatusBadge";
+import Input from "@/components/ui/Input";
 
 const FILTERS = ["all", "active", "sold", "closed"];
 const cap = (s) => s[0].toUpperCase() + s.slice(1);
@@ -50,70 +52,30 @@ export default function AdminListings() {
       />
 
       <div className="flex flex-col gap-3 mb-4 md:flex-row md:items-center md:justify-between">
-        <div
-          className="flex flex-wrap gap-2"
-          role="group"
-          aria-label="Filter by status"
-        >
-          {FILTERS.map((f) => (
-            <button
-              key={f}
-              type="button"
-              className={`chip${filter === f ? " is-on" : ""}`}
-              aria-pressed={filter === f}
-              onClick={() => setFilter(f)}
-            >
-              {cap(f)} <small className="num">{count(f)}</small>
-            </button>
-          ))}
-        </div>
+        <ChipGroup
+          label="Filter by status"
+          options={FILTERS.map((f) => ({
+            value: f,
+            label: cap(f),
+            count: count(f),
+          }))}
+          value={filter}
+          onChange={setFilter}
+        />
 
-        <div className="relative w-full md:w-72">
-          <label htmlFor="admin-q" className="sr-only">
-            Search listings
-          </label>
-          <SearchIcon
-            size={19}
-            aria-hidden="true"
-            style={{
-              position: "absolute",
-              left: ".8rem",
-              top: "50%",
-              transform: "translateY(-50%)",
-              color: "var(--muted)",
-              pointerEvents: "none",
-            }}
-          />
-          <input
-            id="admin-q"
-            type="text"
-            className="input"
-            style={{
-              paddingLeft: "2.6rem",
-              paddingRight: q ? "2.6rem" : undefined,
-            }}
-            placeholder="Title, place or seller"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            autoComplete="off"
-          />
-          {q && (
-            <button
-              type="button"
-              className="icon-btn"
-              aria-label="Clear search"
-              onClick={() => setQ("")}
-              style={{
-                position: "absolute",
-                right: ".3rem",
-                top: "50%",
-                transform: "translateY(-50%)",
-              }}
-            >
-              <CloseIcon size={18} />
-            </button>
-          )}
-        </div>
+        <Input
+          name="admin-q"
+          label="Search listings"
+          hideLabel
+          type="text"
+          icon={<SearchIcon size={19} />}
+          onClear={() => setQ("")}
+          placeholder="Title, place or seller"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          autoComplete="off"
+          className="w-full md:w-72"
+        />
       </div>
 
       {shown.length ? (
@@ -197,14 +159,13 @@ export default function AdminListings() {
                         >
                           View
                         </Button>
-                        <button
-                          type="button"
-                          className="icon-btn"
+                        <Button
+                          variant="icon"
                           aria-label={`Delete ${l.title}`}
                           onClick={() => setTarget(l)}
                         >
                           <TrashIcon size={18} />
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   </tr>

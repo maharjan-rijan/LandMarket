@@ -352,8 +352,27 @@ input[type="number"]::-webkit-inner-spin-button {
 .input-wrap {
   position: relative;
 }
-.input.has-toggle {
+.input.has-toggle,
+.input.has-clear {
   padding-right: 2.7rem;
+}
+.input.has-icon {
+  padding-left: 2.7rem;
+}
+.input-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  color: var(--muted);
+  pointer-events: none;
+}
+.input-clear {
+  position: absolute;
+  right: 0.3rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .input-toggle {
   position: absolute;

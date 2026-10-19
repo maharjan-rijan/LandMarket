@@ -37,14 +37,14 @@ export default function SaveButton({ landId, variant = "icon" }) {
   }
 
   return (
-    <button
-      type="button"
-      className={`icon-btn plot-save${saved ? " is-saved" : ""}`}
+    <Button
+      variant="icon"
+      className={`plot-save${saved ? " is-saved" : ""}`}
       aria-pressed={saved}
       aria-label={saved ? "Remove from saved lands" : "Save this land"}
       onClick={onClick}
     >
       <Icon size={20} />
-    </button>
+    </Button>
   );
 }

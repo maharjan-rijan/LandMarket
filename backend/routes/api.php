@@ -45,6 +45,8 @@ Route::middleware('auth:sanctum')->prefix('account')->name('account.')->group(fu
     Route::put('profile', [AuthController::class, 'updateProfile'])->name('profile');
     Route::put('password', [AuthController::class, 'updatePassword'])->name('password');
     Route::patch('role', [AuthController::class, 'updateRole'])->name('role'); // { role: buyer|seller }
+    Route::post('avatar', [AuthController::class, 'updateAvatar'])->middleware('throttle:10,1')->name('avatar'); // multipart: avatar
+    Route::delete('avatar', [AuthController::class, 'deleteAvatar'])->name('avatar.destroy');
 });
 
 /* -------------------------------------------------------------- Public */

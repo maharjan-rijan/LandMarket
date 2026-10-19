@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { CloseIcon } from "@/hooks/icons";
+import Button from "@/components/ui/Button";
 
 // Uses the native <dialog> element: focus trap, Esc to close and backdrop come for free.
 //
@@ -39,14 +40,9 @@ export default function Modal({ open, onClose, title, children }) {
       <div className="modal-body">
         <div className="flex items-start justify-between gap-4">
           <h2 style={{ fontSize: "1.3rem" }}>{title}</h2>
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={onClose}
-            aria-label="Close"
-          >
+          <Button variant="icon" onClick={onClose} aria-label="Close">
             <CloseIcon size={20} />
-          </button>
+          </Button>
         </div>
         <div className="mt-4">{open && children}</div>
       </div>

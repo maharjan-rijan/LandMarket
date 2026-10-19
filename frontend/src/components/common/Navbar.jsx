@@ -54,15 +54,15 @@ export default function Navbar() {
             )}
           </div>
 
-          <button
-            type="button"
-            className="icon-btn nav-toggle"
+          <Button
+            variant="icon"
+            className="nav-toggle"
             onClick={() => setOpen((o) => !o)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
           >
             {open ? <CloseIcon size={24} /> : <MenuIcon size={24} />}
-          </button>
+          </Button>
         </nav>
       </div>
 

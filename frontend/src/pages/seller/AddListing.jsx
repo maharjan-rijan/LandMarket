@@ -215,14 +215,14 @@ export default function AddListing() {
             <legend className="label">Documents you hold</legend>
             <div className="grid gap-2 sm:grid-cols-2">
               {DOCUMENTS.map((d) => (
-                <label key={d} className="check">
-                  <input
-                    type="checkbox"
-                    checked={v.documents.includes(d)}
-                    onChange={() => toggleDoc(d)}
-                  />
-                  {d}
-                </label>
+                <Input
+                  key={d}
+                  type="checkbox"
+                  name={`doc-${d}`}
+                  label={d}
+                  checked={v.documents.includes(d)}
+                  onChange={() => toggleDoc(d)}
+                />
               ))}
             </div>
             {errors.documents ? (
