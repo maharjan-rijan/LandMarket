@@ -5,6 +5,7 @@ import { DASHBOARD_NAV } from "@/config/dashboardNav";
 import { ROLES, ROLE_LABELS, ROLE_TONES } from "@/lib/roles";
 import Loader from "@/components/common/Loader";
 import Navbar from "@/components/common/Navbar";
+import VerifyNotice from "@/components/auth/VerifyNotice";
 import SampleNotice from "@/components/dashboard/SampleNotice";
 import Avatar from "@/components/ui/Avatar";
 import Badge from "@/components/ui/Badge";
@@ -54,6 +55,7 @@ export default function DashboardLayout() {
           </aside>
 
           <main id="main" className="dash-main">
+            <VerifyNotice />
             <SampleNotice />
             {loading ? <Loader /> : <Outlet />}
           </main>

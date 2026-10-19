@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BuyController;
 use App\Http\Controllers\Api\LandController;
 use App\Http\Controllers\Api\SellController;
+use App\Http\Controllers\Api\EmailOtpController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,6 +37,9 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('me', [AuthController::class, 'me'])->name('me');
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
+        Route::post('send-otp', [EmailOtpController::class, 'send'])->middleware('throttle:6,10');
+        Route::post('verify', [EmailOtpController::class, 'verify'])->middleware('throttle:20,10');
     });
 });
 
@@ -47,6 +51,11 @@ Route::middleware('auth:sanctum')->prefix('account')->name('account.')->group(fu
     Route::patch('role', [AuthController::class, 'updateRole'])->name('role'); // { role: buyer|seller }
     Route::post('avatar', [AuthController::class, 'updateAvatar'])->middleware('throttle:10,1')->name('avatar'); // multipart: avatar
     Route::delete('avatar', [AuthController::class, 'deleteAvatar'])->name('avatar.destroy');
+
+    Route::prefix('email')->name('email.')->group(function () {
+        Route::post('send-otp', [EmailOtpController::class, 'send'])->middleware('throttle:6,10')->name('send');
+        Route::post('verify', [EmailOtpController::class, 'verify'])->middleware('throttle:20,10')->name('verify');
+    });
 });
 
 /* -------------------------------------------------------------- Public */

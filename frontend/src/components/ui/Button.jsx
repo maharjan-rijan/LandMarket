@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 
-const BASE = { icon: "icon-btn", chip: "chip" };
+const BASE = { icon: "icon-btn", chip: "chip", bare: "" };
 
-// variant: primary | accent | outline | ghost | danger | icon | chip
+// variant: primary | accent | outline | ghost | danger | icon | chip | bare (no styling)
 // - `to`     renders a <Link>
 // - `as`     renders another element (e.g. as="label" htmlFor="file-id")
 // - `active` marks a chip as selected (is-on + aria-pressed)
