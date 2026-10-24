@@ -17,9 +17,4 @@ export const maskEmail = (email = "") => {
 export const sendEmailOtp = () => api.post("/account/email/send-otp");
 
 // Checks the code the user typed. Resolves when the email is verified.
-<<<<<<< HEAD
 export const verifyEmailOtp = (code) => api.post("/account/email/verify", { code });
-=======
-export const verifyEmailOtp = (code) =>
-  api.post("/account/email/verify", { code });
->>>>>>> 28b5ddfd326781e19d70ed92f750195485336fce
