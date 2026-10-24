@@ -1,0 +1,227 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>LandMarket Checklist</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: one narrow column. Summary and filters first, then one card per area with tick rows. */
+:root {
+  --bg: #f3f6f1;
+  --surface: #ffffff;
+  --ink: #17332a;
+  --muted: #5b6e66;
+  --line: #d3dbd1;
+  --accent: #1e6b4b;
+  --accent-wash: #e1eee5;
+  --warn: #b87800;
+  --warn-wash: #fff1cc;
+  --font-display: "Bricolage Grotesque", "Segoe UI", sans-serif;
+  --font-body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1c17; --surface: #172721; --ink: #e4efe8; --muted: #93a79d; --line: #2a3d35;
+    --accent: #5cc08f; --accent-wash: #1d3a2d; --warn: #f0b84a; --warn-wash: #3a2f12;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1c17; --surface: #172721; --ink: #e4efe8; --muted: #93a79d; --line: #2a3d35;
+  --accent: #5cc08f; --accent-wash: #1d3a2d; --warn: #f0b84a; --warn-wash: #3a2f12;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-block: 2rem 4rem;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+main { max-width: 46rem; margin: 0 auto; display: grid; gap: 1.25rem; }
+h1, h2 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); line-height: 1.1; }
+.sub { color: var(--muted); margin: .4rem 0 0; max-width: 60ch; }
+.summary { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.1rem; display: grid; gap: .7rem; }
+.summary-top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+.big { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.bar { height: 8px; background: var(--accent-wash); border-radius: 99px; overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.chip, .reset {
+  font: inherit; font-size: .85rem; font-weight: 600; padding: .35rem .8rem; border-radius: 99px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+}
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.reset { margin-left: auto; color: var(--muted); }
+.chip:focus-visible, .reset:focus-visible, .row:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+section { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+section header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .8rem 1.1rem; border-bottom: 1px solid var(--line); }
+h2 { font-size: 1.15rem; }
+.count { font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+ul { list-style: none; margin: 0; padding: 0; }
+li + li { border-top: 1px solid var(--line); }
+.row { display: flex; gap: .75rem; padding: .65rem 1.1rem; cursor: pointer; align-items: flex-start; }
+.row:hover { background: var(--accent-wash); }
+.row input { margin-top: .22rem; width: 1.05rem; height: 1.05rem; accent-color: var(--accent); flex: none; }
+.row span { min-width: 0; }
+.row input:checked + span { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+.note { display: block; font-size: .82rem; color: var(--muted); text-decoration: none; }
+.tag { display: inline-block; font-size: .7rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; padding: .05rem .45rem; margin-left: .4rem; border-radius: 4px; background: var(--warn-wash); color: var(--warn); vertical-align: 1px; }
+.empty { padding: 1rem 1.1rem; color: var(--muted); }
+</style>
+
+<main>
+  <div>
+    <h1>LandMarket Checklist</h1>
+    <p class="sub">Everything left before the land marketplace goes live: React frontend, Laravel API, MongoDB. Ticks save in this browser.</p>
+  </div>
+
+  <div class="summary" aria-live="polite">
+    <div class="summary-top">
+      <span class="big" id="pct">0%</span>
+      <span class="count" id="tally"></span>
+    </div>
+    <div class="bar" role="progressbar" aria-label="Overall progress" aria-valuemin="0" aria-valuemax="100" id="bar"><i></i></div>
+    <div class="tools">
+      <button class="chip" data-f="all" aria-pressed="true">All</button>
+      <button class="chip" data-f="open" aria-pressed="false">To do</button>
+      <button class="chip" data-f="done" aria-pressed="false">Done</button>
+      <button class="reset" id="reset">Reset ticks</button>
+    </div>
+  </div>
+
+  <div id="groups"></div>
+</main>
+
+<script>
+// d: ticked from the start (work already delivered). n: short note. t: tag shown next to the item.
+const DATA = [
+  ["Accounts and login", [
+    { id: "a1", d: 1, x: "Register, login, logout and session restore on refresh" },
+    { id: "a2", d: 1, x: "Role choice: buyer, seller, admin, user" },
+    { id: "a3", x: "Forgot password and reset by email", n: "Reuse the Mailtrap setup from verification" },
+    { id: "a4", x: "Suspended accounts cannot log in (check on login and on every request)" },
+    { id: "a5", x: "Profile and avatar upload with cropper tested on mobile" },
+  ]],
+  ["Email and phone verification", [
+    { id: "v1", d: 1, x: "Warning banner on the dashboard and choose popup" },
+    { id: "v2", d: 1, x: "Code entry popup with resend countdown" },
+    { id: "v3", d: 1, x: "send-otp and verify endpoints under /account/email, MongoDB collection with TTL" },
+    { id: "v4", x: "Set Mailtrap SMTP in .env, run config:clear, receive the code in the inbox", n: "If nothing arrives, check MAIL_MAILER is smtp and not log" },
+    { id: "v5", x: "Run EmailOtpTest and fix any Mongo-specific failures" },
+    { id: "v6", x: "Block listing, inquiry and demand actions until email is verified", t: "decide" },
+    { id: "v7", x: "Phone verification: SMS driver (log in dev, Sparrow or Aakash in production)", t: "later" },
+  ]],
+  ["Listings (seller)", [
+    { id: "l1", d: 1, x: "Add, edit, close, mark sold and delete listing" },
+    { id: "l2", x: "Photo upload for listings with size and type limits" },
+    { id: "l3", x: "Document upload for ownership papers (currently only names are saved)" },
+    { id: "l4", x: "Ward, district and municipality validation against real Nepal data" },
+    { id: "l5", x: "Seller store page with about text, phone and email" },
+  ]],
+  ["Buyer features", [
+    { id: "b1", d: 1, x: "Search and filter lands by district, price, size and road width" },
+    { id: "b2", d: 1, x: "Save lands, send inquiries, post demands" },
+    { id: "b3", x: "Email the seller when an inquiry arrives and the buyer when a seller replies" },
+    { id: "b4", x: "Purchase history and ownership chain verified against real sales" },
+    { id: "b5", x: "Area converter checked for ropani, aana, paisa, dam and square feet" },
+  ]],
+  ["Admin tools", [
+    { id: "m1", d: 1, x: "User list with role filter, search, suspend and reactivate" },
+    { id: "m2", d: 1, x: "Listing list with status filter, search and delete" },
+    { id: "m3", x: "Audit log of who suspended or deleted what" },
+    { id: "m4", x: "Report a listing button for buyers, with a review queue for admins" },
+  ]],
+  ["Frontend quality", [
+    { id: "f1", d: 1, x: "Shared Input, Button and ChipGroup components in place of raw tags" },
+    { id: "f2", x: "Finish converting DropdownMenu trigger to Button (needs ref forwarding)" },
+    { id: "f3", x: "Remove or finish pages/public/Rent.jsx, it is not routed and its imports are missing" },
+    { id: "f4", x: "Check every page at 360px, 768px and desktop width" },
+    { id: "f5", x: "Keyboard and screen reader pass: focus order, dialog labels, error messages" },
+    { id: "f6", x: "Loading, empty and error state on every list page" },
+    { id: "f7", x: "Replace sample data with the live API (hasSample notice goes away)" },
+  ]],
+  ["API and database", [
+    { id: "d1", x: "Indexes on lands (district, status, price_per_aana), users (email unique), inquiries (store_id)" },
+    { id: "d2", x: "Seeders for demo users, stores and lands" },
+    { id: "d3", x: "Pagination on lands, inquiries and users lists" },
+    { id: "d4", x: "Consistent error format: message plus errors{field: [text]}" },
+    { id: "d5", x: "File storage disk set up (local in dev, S3-compatible in production)" },
+    { id: "d6", x: "API feature tests for auth, role middleware and each controller" },
+  ]],
+  ["Security", [
+    { id: "s1", x: "Rate limits on login, register, OTP and inquiry endpoints" },
+    { id: "s2", x: "CORS limited to the real frontend origin" },
+    { id: "s3", x: "Sanctum token expiry and logout on all devices" },
+    { id: "s4", x: "Server-side checks that a seller edits only their own lands" },
+    { id: "s5", x: "Upload scanning: reject executables, strip image metadata" },
+    { id: "s6", x: "APP_DEBUG=false and no secrets in the repository" },
+  ]],
+  ["Release", [
+    { id: "r1", x: "Production .env: real SMTP provider in place of Mailtrap, MongoDB Atlas URI, APP_URL" },
+    { id: "r2", x: "Frontend build with VITE_API_URL pointing at production" },
+    { id: "r3", x: "HTTPS, domain and redirects" },
+    { id: "r4", x: "Database backups and a restore test" },
+    { id: "r5", x: "Error monitoring and log rotation" },
+    { id: "r6", x: "Terms, privacy policy and contact page" },
+    { id: "r7", x: "Walk through the full path with a fresh account: register, verify, list, inquire, reply, mark sold" },
+  ]],
+];
+
+const KEY = "landmarket-checklist-v1";
+let ticks = {};
+try { ticks = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
+let filter = "all";
+
+const all = DATA.flatMap(([, items]) => items);
+const isDone = (it) => (it.id in ticks ? ticks[it.id] : !!it.d);
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(ticks)); } catch (e) {} };
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function render() {
+  const root = document.getElementById("groups");
+  root.style.display = "grid";
+  root.style.gap = "1.25rem";
+  root.innerHTML = DATA.map(([title, items]) => {
+    const done = items.filter(isDone).length;
+    const shown = items.filter((it) => filter === "all" || (filter === "done") === isDone(it));
+    const rows = shown.length
+      ? shown.map((it) => `
+        <li><label class="row">
+          <input type="checkbox" id="${it.id}" ${isDone(it) ? "checked" : ""}>
+          <span>${esc(it.x)}${it.t ? `<em class="tag">${esc(it.t)}</em>` : ""}${it.n ? `<span class="note">${esc(it.n)}</span>` : ""}</span>
+        </label></li>`).join("")
+      : `<li class="empty">${filter === "done" ? "Nothing ticked here yet." : "All done in this area."}</li>`;
+    return `<section><header><h2>${esc(title)}</h2><span class="count">${done} of ${items.length}</span></header><ul>${rows}</ul></section>`;
+  }).join("");
+
+  const n = all.filter(isDone).length;
+  const pct = Math.round((n / all.length) * 100);
+  document.getElementById("pct").textContent = pct + "%";
+  document.getElementById("tally").textContent = `${n} of ${all.length} done, ${all.length - n} to do`;
+  const bar = document.getElementById("bar");
+  bar.setAttribute("aria-valuenow", pct);
+  bar.firstElementChild.style.width = pct + "%";
+}
+
+document.getElementById("groups").addEventListener("change", (e) => {
+  if (e.target.type !== "checkbox") return;
+  ticks[e.target.id] = e.target.checked;
+  save();
+  render();
+  const again = document.getElementById(e.target.id);
+  if (again) again.focus();
+});
+document.querySelectorAll(".chip").forEach((b) =>
+  b.addEventListener("click", () => {
+    filter = b.dataset.f;
+    document.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
+    render();
+  })
+);
+document.getElementById("reset").addEventListener("click", () => { ticks = {}; save(); render(); });
+render();
+</script>
+
+</body></html>

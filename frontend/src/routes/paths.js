@@ -8,6 +8,7 @@ export const PATHS = {
   converter: "/area-converter",
   login: "/login",
   register: "/register",
+  forgotPassword: "/forgot-password",
 
   // Sends the visitor to the dashboard that matches their role
   dashboard: "/dashboard",

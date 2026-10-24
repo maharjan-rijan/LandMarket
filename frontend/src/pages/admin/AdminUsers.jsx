@@ -2,9 +2,12 @@ import { useState } from "react";
 import { useData } from "@/store/DataContext";
 import { formatDate } from "@/lib/format";
 import { ROLES, ROLE_LABELS, ROLE_TONES } from "@/lib/roles";
+import Avatar from "@/components/ui/Avatar";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+import ChipGroup from "@/components/ui/ChipGroup";
 import Input from "@/components/ui/Input";
+import { SearchIcon } from "@/hooks/icons";
 import EmptyState from "@/components/common/EmptyState";
 import PageHeader from "@/components/common/PageHeader";
 import StatusBadge from "@/components/land/StatusBadge";
@@ -39,35 +42,30 @@ export default function AdminUsers() {
         title="Users"
         text="Everyone else with an account. Your own account is not listed. Suspended people cannot log in."
       />
-
-      <div className="flex flex-wrap items-end justify-between gap-4 mb-4">
-        <div
-          className="flex flex-wrap gap-2"
-          role="group"
-          aria-label="Filter by role"
-        >
-          {ROLE_FILTERS.map((r) => (
-            <button
-              key={r}
-              type="button"
-              className={`chip${role === r ? " is-on" : ""}`}
-              aria-pressed={role === r}
-              onClick={() => setRole(r)}
-            >
-              {r === "all" ? "Everyone" : ROLE_LABELS[r]}{" "}
-              <small className="num">{count(r)}</small>
-            </button>
-          ))}
-        </div>
+      <div className="flex flex-col gap-3 mb-4 md:flex-row md:items-center md:justify-between">
+        <ChipGroup
+          label="Filter by role"
+          className="md:flex-1"
+          options={ROLE_FILTERS.map((r) => ({
+            value: r,
+            label: r === "all" ? "Everyone" : ROLE_LABELS[r],
+            count: count(r),
+          }))}
+          value={role}
+          onChange={setRole}
+        />
         <Input
-          label="Search"
           name="q"
+          label="Search users"
+          hideLabel
           type="search"
+          icon={<SearchIcon size={19} />}
+          onClear={() => setQ("")}
           placeholder="Name or email"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          className="w-full"
-          style={{ maxWidth: "18rem" }}
+          autoComplete="off"
+          className="w-full md:w-72 md:shrink-0"
         />
       </div>
 
@@ -87,8 +85,11 @@ export default function AdminUsers() {
             <tbody>
               {shown.map((u) => (
                 <tr key={u.id}>
-                  <td className="font-medium" style={{ minWidth: "10rem" }}>
-                    {u.name}
+                  <td style={{ minWidth: "12rem" }}>
+                    <div className="flex items-center gap-3">
+                      <Avatar src={u.avatarUrl} name={u.name} size={32} />
+                      <span className="font-medium">{u.name}</span>
+                    </div>
                   </td>
                   <td className="text-muted">{u.email}</td>
                   <td>

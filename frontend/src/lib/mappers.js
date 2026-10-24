@@ -51,12 +51,7 @@ export const mapInquiry = (i) => ({
   status: i.status,
   createdAt: i.created_at,
   // the seller's replies, oldest first
-  replies: (i.replies ?? []).map((r) => ({
-    id: r.id,
-    from: r.from,
-    message: r.message,
-    createdAt: r.created_at,
-  })),
+  replies: (i.replies ?? []).map((r) => ({ id: r.id, from: r.from, message: r.message, createdAt: r.created_at })),
 });
 
 export const mapDemand = (d) => ({
@@ -79,6 +74,7 @@ export const mapUser = (u) => ({
   role: u.role,
   status: u.status ?? "active", // accounts created before suspension existed have no status
   joinedAt: u.created_at,
+  avatarUrl: u.avatar_url ?? undefined,
 });
 
 export const mapPurchase = (p, buyerId) => ({

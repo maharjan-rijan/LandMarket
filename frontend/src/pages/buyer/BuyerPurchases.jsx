@@ -26,8 +26,8 @@ export default function BuyerPurchases() {
     [purchases, uid],
   );
 
-  const [sell, setSell] = useState(null); // the purchase being sold on
-  const [record, setRecord] = useState(null); // the purchase whose ownership record is open
+  const [sell, setSell] = useState(null); 
+  const [record, setRecord] = useState(null); 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [fieldError, setFieldError] = useState("");

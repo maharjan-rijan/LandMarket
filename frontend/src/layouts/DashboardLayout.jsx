@@ -5,7 +5,9 @@ import { DASHBOARD_NAV } from "@/config/dashboardNav";
 import { ROLES, ROLE_LABELS, ROLE_TONES } from "@/lib/roles";
 import Loader from "@/components/common/Loader";
 import Navbar from "@/components/common/Navbar";
+import VerifyNotice from "@/components/auth/VerifyNotice";
 import SampleNotice from "@/components/dashboard/SampleNotice";
+import Avatar from "@/components/ui/Avatar";
 import Badge from "@/components/ui/Badge";
 
 // One layout for every role: the sidebar comes from config/dashboardNav.js.
@@ -27,9 +29,7 @@ export default function DashboardLayout() {
         <div className="dash">
           <aside className="dash-aside" aria-label="Dashboard menu">
             <div className="dash-who">
-              <div className="avatar" aria-hidden="true">
-                {(displayName || "?").charAt(0)}
-              </div>
+              <Avatar src={user.avatar_url} name={displayName} />
               <div className="min-w-0">
                 <p className="font-semibold truncate">{displayName}</p>
                 <Badge tone={ROLE_TONES[user.role] ?? "gray"}>
@@ -55,6 +55,7 @@ export default function DashboardLayout() {
           </aside>
 
           <main id="main" className="dash-main">
+            <VerifyNotice />
             <SampleNotice />
             {loading ? <Loader /> : <Outlet />}
           </main>

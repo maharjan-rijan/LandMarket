@@ -1,4 +1,5 @@
 import { ROLES } from "@/lib/roles";
+import Input from "../ui/Input";
 
 const options = [
   { value: ROLES.BUYER, title: "Buy land", hint: "Search, save and inquire" },
@@ -13,7 +14,7 @@ export default function RoleSelector({ value, onChange, error }) {
       <div className="grid gap-3 sm:grid-cols-3">
         {options.map((o) => (
           <label key={o.value} className={`role-opt${value === o.value ? " is-on" : ""}`}>
-            <input
+            <Input
               type="radio"
               name="role"
               value={o.value}

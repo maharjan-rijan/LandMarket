@@ -28,7 +28,12 @@ export {
   HiOutlineClock as ClockIcon,
   HiOutlineUserGroup as PeopleIcon,
   HiOutlineChartBar as ChartIcon,
-  HiOutlineChevronDown as ChevronDownIcon 
+  HiOutlineChevronDown as ChevronDownIcon,
+  HiOutlineMail as MailIcon,
+  HiOutlineExclamation as WarningIcon,
 } from "react-icons/hi";
 
-export { HiOutlineUser as UserIcon, HiOutlineLockClosed as LockIcon } from "react-icons/hi";
+export {
+  HiOutlineUser as UserIcon,
+  HiOutlineLockClosed as LockIcon,
+} from "react-icons/hi";

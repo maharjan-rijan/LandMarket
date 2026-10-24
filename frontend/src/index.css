@@ -193,6 +193,54 @@ a {
 .empty h3 {
   margin-bottom: 0.25rem;
 }
+.notice-warn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ecc766;
+  border-radius: var(--r-md);
+  background: var(--marigold-wash);
+  color: #6b4700;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.notice-warn:hover {
+  background: #ffe9b0;
+}
+.verify-opt {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.verify-opt:hover:not(:disabled) {
+  border-color: var(--terrace);
+  background: var(--terrace-wash);
+}
+.verify-opt:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.verify-done {
+  margin-left: auto;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--terrace-dark);
+}
 .notice {
   display: flex;
   flex-wrap: wrap;
@@ -352,8 +400,27 @@ input[type="number"]::-webkit-inner-spin-button {
 .input-wrap {
   position: relative;
 }
-.input.has-toggle {
+.input.has-toggle,
+.input.has-clear {
   padding-right: 2.7rem;
+}
+.input.has-icon {
+  padding-left: 2.7rem;
+}
+.input-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  color: var(--muted);
+  pointer-events: none;
+}
+.input-clear {
+  position: absolute;
+  right: 0.3rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .input-toggle {
   position: absolute;

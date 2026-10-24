@@ -42,7 +42,7 @@ export default function AdminOverview() {
 
   return (
     <>
-      <PageHeader title="Admin overview" text="How the marketplace is doing." />
+      <PageHeader title="Admin Overview" text="How the marketplace is doing." />
 
       <div className="flex flex-col gap-6">
         <StatStrip items={stats} />

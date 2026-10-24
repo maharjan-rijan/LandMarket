@@ -3,7 +3,9 @@
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BuyController;
+use App\Http\Controllers\Api\EmailOtpController;
 use App\Http\Controllers\Api\LandController;
+use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\SellController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,42 +14,39 @@ use Illuminate\Support\Facades\Route;
 | LandMarket API  (every URL below is prefixed with /api)
 |--------------------------------------------------------------------------
 | One controller per job:
-|   AuthController   register, login, me, logout and the account pages
-|   LandController   what anyone can see: lands and sellers' store pages
-|   BuyController    everything a buyer does
-|   SellController   everything a seller does
-|   AdminController  the admin tools
+|   AuthController           register, login, me, logout and the account pages
+|   PasswordResetController  forgot and reset password by emailed code
+|   EmailOtpController       verify the logged-in user's email by emailed code
+|   LandController           what anyone can see: lands and sellers' store pages
+|   BuyController            everything a buyer does
+|   SellController           everything a seller does
+|   AdminController          the admin tools
 |
-| auth          register, login, me, logout
-| account/*     auth:sanctum (any role): profile, password, role choice
-| buyer/*       auth:sanctum + role:buyer
-| seller/*      auth:sanctum + role:seller
-| admin/*       auth:sanctum + role:admin
+| Who can call what:
+|   1. Public      auth/register, login, forgot-password, verify-reset-code, reset-password; lands/*, stores/*
+|   2. Logged in   auth/me, logout; account/* (profile, password, role, avatar, email)
+|   3. Buyer       buyer/* and lands/{land}/inquiries      auth:sanctum + role:buyer
+|   4. Seller      seller/*                                auth:sanctum + role:seller
+|   5. Admin       admin/*                                 auth:sanctum + role:admin
 |
 | The `role` middleware alias is registered in bootstrap/app.php (see EnsureRole).
 */
 
-/* ---------------------------------------------------------------- Auth */
+/* ===================================================================== 1. PUBLIC */
 
+/* ---------------------------------------------------------------- Auth (guest) */
 Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->middleware('throttle:10,1')->name('register');
     Route::post('login', [AuthController::class, 'login'])->middleware('throttle:10,1')->name('login');
 
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('me', [AuthController::class, 'me'])->name('me');
-        Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-    });
+    // Forgot password in three steps: email a code, check the code (returns a token), set the new password.
+    // The first step always answers 200, so it never reveals which emails have accounts.
+    Route::post('forgot-password', [PasswordResetController::class, 'forgot'])->middleware('throttle:6,10')->name('forgot');
+    Route::post('verify-reset-code', [PasswordResetController::class, 'verifyCode'])->middleware('throttle:20,10')->name('verify-reset');
+    Route::post('reset-password', [PasswordResetController::class, 'reset'])->middleware('throttle:10,10')->name('reset');
 });
 
-/* ------------------------------------------------------------- Account */
-// Every logged-in role: profile, password and the one-time "user -> buyer|seller" choice.
-Route::middleware('auth:sanctum')->prefix('account')->name('account.')->group(function () {
-    Route::put('profile', [AuthController::class, 'updateProfile'])->name('profile');
-    Route::put('password', [AuthController::class, 'updatePassword'])->name('password');
-    Route::patch('role', [AuthController::class, 'updateRole'])->name('role'); // { role: buyer|seller }
-});
-
-/* -------------------------------------------------------------- Public */
+/* ------------------------------------------------------------- Lands and stores */
 // GET /lands?district=&q=&max_price=&min_area=&min_road=&sort=price-asc|price-desc|area-desc|area-asc
 Route::get('lands', [LandController::class, 'index'])->name('lands.index');
 Route::get('lands/{land}', [LandController::class, 'show'])->name('lands.show');
@@ -56,7 +55,34 @@ Route::get('stores', [LandController::class, 'stores'])->name('stores.index');
 Route::get('stores/{store}', [LandController::class, 'showStore'])->name('stores.show');
 Route::get('stores/{store}/lands', [LandController::class, 'storeLands'])->name('stores.lands');
 
-/* --------------------------------------------------------------- Buyer */
+/* =================================================================== 2. LOGGED IN */
+// Every role.
+Route::middleware('auth:sanctum')->group(function () {
+
+    /* ---------------------------------------------------------------- Session */
+    Route::prefix('auth')->name('auth.')->group(function () {
+        Route::get('me', [AuthController::class, 'me'])->name('me');
+        Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    });
+
+    /* ---------------------------------------------------------------- Account */
+    // Profile, password, the one-time "user -> buyer|seller" choice, avatar and email verification.
+    Route::prefix('account')->name('account.')->group(function () {
+        Route::put('profile', [AuthController::class, 'updateProfile'])->name('profile');
+        Route::put('password', [AuthController::class, 'updatePassword'])->name('password');
+        Route::patch('role', [AuthController::class, 'updateRole'])->name('role'); // { role: buyer|seller }
+        Route::post('avatar', [AuthController::class, 'updateAvatar'])->middleware('throttle:10,1')->name('avatar'); // multipart: avatar
+        Route::delete('avatar', [AuthController::class, 'deleteAvatar'])->name('avatar.destroy');
+
+        // Email verification by one-time code
+        Route::prefix('email')->name('email.')->group(function () {
+            Route::post('send-otp', [EmailOtpController::class, 'send'])->middleware('throttle:6,10')->name('send');   // emails a code
+            Route::post('verify', [EmailOtpController::class, 'verify'])->middleware('throttle:20,10')->name('verify'); // { code }
+        });
+    });
+});
+
+/* ======================================================================= 3. BUYER */
 Route::middleware(['auth:sanctum', 'role:buyer'])->group(function () {
     // Send an inquiry about a land.
     Route::post('lands/{land}/inquiries', [BuyController::class, 'sendInquiry'])
@@ -82,7 +108,7 @@ Route::middleware(['auth:sanctum', 'role:buyer'])->group(function () {
     });
 });
 
-/* -------------------------------------------------------------- Seller */
+/* ====================================================================== 4. SELLER */
 Route::middleware(['auth:sanctum', 'role:seller'])->prefix('seller')->name('seller.')->group(function () {
     // Dashboard overview
     Route::get('summary', [SellController::class, 'summary'])->name('summary');
@@ -108,7 +134,7 @@ Route::middleware(['auth:sanctum', 'role:seller'])->prefix('seller')->name('sell
     Route::put('store', [SellController::class, 'updateStore'])->name('store.update');
 });
 
-/* --------------------------------------------------------------- Admin */
+/* ======================================================================= 5. ADMIN */
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard overview: user, seller and listing counts
     Route::get('summary', [AdminController::class, 'summary'])->name('summary');

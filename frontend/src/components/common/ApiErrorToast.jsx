@@ -1,5 +1,6 @@
 import { useData } from "@/store/DataContext";
 import { CloseIcon } from "@/hooks/icons";
+import Button from "@/components/ui/Button";
 
 // Shows the last API error in the corner of the screen, wherever the person has scrolled.
 export default function ApiErrorToast() {
@@ -27,15 +28,14 @@ export default function ApiErrorToast() {
       }}
     >
       <p style={{ flex: 1 }}>{error}</p>
-      <button
-        type="button"
-        className="icon-btn"
+      <Button
+        variant="icon"
         style={{ width: "1.75rem", height: "1.75rem" }}
         onClick={clearError}
         aria-label="Dismiss message"
       >
         <CloseIcon size={16} />
-      </button>
+      </Button>
     </div>
   );
 }

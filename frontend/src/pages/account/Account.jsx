@@ -7,9 +7,9 @@ import Alert from "@/components/ui/Alert";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import AvatarField from "@/components/ui/AvatarField";
 import PageHeader from "@/components/common/PageHeader";
 
-// Shared by every role: name, phone and password.
 export default function Account() {
   const { user, updateUser } = useAuth();
   const [saved, setSaved] = useState("");
@@ -45,61 +45,72 @@ export default function Account() {
   return (
     <>
       <PageHeader
-        title="My account"
+        title="My Account"
         text="Update how buyers, sellers and LandMarket reach you."
       />
 
+      <section
+        className="sheet sheet-pad flex flex-col gap-3 mb-4"
+        aria-labelledby="photo-h"
+      >
+        <h2 id="photo-h" style={{ fontSize: "1.2rem" }}>
+          Profile Picture
+        </h2>
+        <AvatarField />
+      </section>
       <div className="grid gap-6 xl:grid-cols-2 xl:items-start">
-        <form
-          onSubmit={saveProfile}
-          className="sheet sheet-pad flex flex-col gap-4"
-          noValidate
-        >
-          <div className="flex items-center justify-between gap-3">
-            <h2 style={{ fontSize: "1.2rem" }}>Profile</h2>
-            <Badge tone={ROLE_TONES[user.role] ?? "gray"}>
-              {ROLE_LABELS[user.role] ?? user.role}
-            </Badge>
-          </div>
+        <div className="flex flex-col gap-6">
+          <form
+            onSubmit={saveProfile}
+            className="sheet sheet-pad flex flex-col gap-4"
+            noValidate
+          >
+            <div className="flex items-center justify-between gap-3">
+              <h2 style={{ fontSize: "1.2rem" }}>Profile</h2>
+              <Badge tone={ROLE_TONES[user.role] ?? "gray"}>
+                {ROLE_LABELS[user.role] ?? user.role}
+              </Badge>
+            </div>
 
-          <Alert type="success">
-            {saved === "profile" ? "Profile saved." : ""}
-          </Alert>
-          <Alert>{general(profile)}</Alert>
+            <Alert type="success">
+              {saved === "profile" ? "Profile saved." : ""}
+            </Alert>
+            <Alert>{general(profile)}</Alert>
 
-          <Input
-            label="Full name"
-            name="name"
-            autoComplete="name"
-            value={profile.values.name}
-            onChange={profile.handleChange}
-            error={profile.errors.fields.name}
-          />
-          <Input
-            label="Phone"
-            name="phone"
-            type="tel"
-            autoComplete="tel"
-            value={profile.values.phone}
-            onChange={profile.handleChange}
-            error={profile.errors.fields.phone}
-            hint="Sellers and buyers use this to call you."
-          />
-          <Input
-            label="Email"
-            name="email"
-            value={user.email || ""}
-            disabled
-            readOnly
-            hint="You log in with this address. It cannot be changed here."
-          />
+            <Input
+              label="Full Name"
+              name="name"
+              autoComplete="name"
+              value={profile.values.name}
+              onChange={profile.handleChange}
+              error={profile.errors.fields.name}
+            />
+            <Input
+              label="Phone"
+              name="phone"
+              type="tel"
+              autoComplete="tel"
+              value={profile.values.phone}
+              onChange={profile.handleChange}
+              error={profile.errors.fields.phone}
+              hint="Sellers and buyers use this to call you."
+            />
+            <Input
+              label="Email"
+              name="email"
+              value={user.email || ""}
+              disabled
+              readOnly
+              hint="You log in with this address. It cannot be changed here."
+            />
 
-          <div>
-            <Button type="submit" loading={profile.submitting}>
-              Save profile
-            </Button>
-          </div>
-        </form>
+            <div>
+              <Button type="submit" loading={profile.submitting}>
+                Save profile
+              </Button>
+            </div>
+          </form>
+        </div>
 
         <form
           onSubmit={savePassword}
@@ -114,7 +125,7 @@ export default function Account() {
           <Alert>{general(password)}</Alert>
 
           <Input
-            label="Current password"
+            label="Current Password"
             name="current_password"
             type="password"
             autoComplete="current-password"
@@ -123,7 +134,7 @@ export default function Account() {
             error={password.errors.fields.current_password}
           />
           <Input
-            label="New password"
+            label="New Password"
             name="password"
             type="password"
             autoComplete="new-password"
@@ -133,7 +144,7 @@ export default function Account() {
             hint="At least 8 characters."
           />
           <Input
-            label="Confirm new password"
+            label="Confirm New Password"
             name="password_confirmation"
             type="password"
             autoComplete="new-password"

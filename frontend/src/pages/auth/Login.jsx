@@ -65,6 +65,9 @@ export default function Login() {
           onChange={handleChange}
           error={errors.fields.password}
         />
+        <Link to={PATHS.forgotPassword} className="link text-sm" style={{ alignSelf: "flex-end", marginTop: "-.5rem" }}>
+          Forgot password?
+        </Link>
         <Button type="submit" loading={submitting} className="btn-block">
           Login
         </Button>
