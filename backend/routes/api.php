@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\EmailOtpController;
 use App\Http\Controllers\Api\LandController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\SellController;
+use App\Http\Controllers\Api\EmailOtpController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,6 +40,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->middleware('throttle:10,1')->name('register');
     Route::post('login', [AuthController::class, 'login'])->middleware('throttle:10,1')->name('login');
 
+<<<<<<< HEAD
     // Forgot password in three steps: email a code, check the code (returns a token), set the new password.
     // The first step always answers 200, so it never reveals which emails have accounts.
     Route::post('forgot-password', [PasswordResetController::class, 'forgot'])->middleware('throttle:6,10')->name('forgot');
@@ -47,6 +49,33 @@ Route::prefix('auth')->name('auth.')->group(function () {
 });
 
 /* ------------------------------------------------------------- Lands and stores */
+=======
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('me', [AuthController::class, 'me'])->name('me');
+        Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
+        Route::post('send-otp', [EmailOtpController::class, 'send'])->middleware('throttle:6,10');
+        Route::post('verify', [EmailOtpController::class, 'verify'])->middleware('throttle:20,10');
+    });
+});
+
+/* ------------------------------------------------------------- Account */
+// Every logged-in role: profile, password and the one-time "user -> buyer|seller" choice.
+Route::middleware('auth:sanctum')->prefix('account')->name('account.')->group(function () {
+    Route::put('profile', [AuthController::class, 'updateProfile'])->name('profile');
+    Route::put('password', [AuthController::class, 'updatePassword'])->name('password');
+    Route::patch('role', [AuthController::class, 'updateRole'])->name('role'); // { role: buyer|seller }
+    Route::post('avatar', [AuthController::class, 'updateAvatar'])->middleware('throttle:10,1')->name('avatar'); // multipart: avatar
+    Route::delete('avatar', [AuthController::class, 'deleteAvatar'])->name('avatar.destroy');
+
+    Route::prefix('email')->name('email.')->group(function () {
+        Route::post('send-otp', [EmailOtpController::class, 'send'])->middleware('throttle:6,10')->name('send');
+        Route::post('verify', [EmailOtpController::class, 'verify'])->middleware('throttle:20,10')->name('verify');
+    });
+});
+
+/* -------------------------------------------------------------- Public */
+>>>>>>> 28b5ddfd326781e19d70ed92f750195485336fce
 // GET /lands?district=&q=&max_price=&min_area=&min_road=&sort=price-asc|price-desc|area-desc|area-asc
 Route::get('lands', [LandController::class, 'index'])->name('lands.index');
 Route::get('lands/{land}', [LandController::class, 'show'])->name('lands.show');
