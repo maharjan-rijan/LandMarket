@@ -5,6 +5,7 @@ import useForm from "@/hooks/useForm";
 import { requestResetCode, resetPassword } from "@/lib/passwordReset";
 import { PATHS } from "@/routes/paths";
 import AuthCard from "@/components/auth/AuthCard";
+import PasswordFields from "@/components/auth/PasswordFields";
 import ResetCodeDialog from "@/components/auth/ResetCodeDialog";
 import Alert from "@/components/ui/Alert";
 import Button from "@/components/ui/Button";
@@ -97,24 +98,12 @@ export default function ForgotPassword() {
         <form onSubmit={reset} className="flex flex-col gap-4" noValidate>
           <Alert type="success">Code verified for {values.email}.</Alert>
           <Alert>{general}</Alert>
-          <Input
-            label="New password"
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            value={values.password}
+          <PasswordFields
+            values={values}
             onChange={handleChange}
-            error={errors.fields.password}
-            hint="At least 8 characters."
-          />
-          <Input
-            label="Confirm new password"
-            name="password_confirmation"
-            type="password"
-            autoComplete="new-password"
-            value={values.password_confirmation}
-            onChange={handleChange}
-            error={errors.fields.password_confirmation}
+            errors={errors.fields}
+            passwordLabel="New password"
+            confirmLabel="Confirm new password"
           />
           <Button type="submit" loading={submitting} className="btn-block">
             Reset password

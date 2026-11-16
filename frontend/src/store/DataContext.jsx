@@ -267,9 +267,11 @@ export function DataProvider({ children }) {
       run(async () => {
         const { data } = await api.post("/seller/lands", {
           title: v.title,
+          province: v.province,
           district: v.district,
           municipality: v.municipality,
           ward: v.ward,
+          tole: v.tole,
           area_aana: v.areaAana,
           price_per_aana: v.pricePerAana,
           road_ft: v.roadFt,

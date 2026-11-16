@@ -15,6 +15,8 @@ export default function Input({
   as = "input",
   error,
   hint,
+  success,
+  warning,
   hideLabel = false,
   icon,
   onClear,
@@ -45,12 +47,18 @@ export default function Input({
     "aria-invalid": error ? true : undefined,
     "aria-describedby": error
       ? `${name}-error`
-      : hint
-        ? `${name}-hint`
-        : undefined,
+      : warning
+        ? `${name}-warning`
+        : success
+          ? `${name}-success`
+          : hint
+            ? `${name}-hint`
+            : undefined,
     className: [
       !bare && "input",
       error && "input-error",
+      !error && warning && "input-warning",
+      !error && success && "input-success",
       isPassword && "has-toggle",
       icon && "has-icon",
       hasClear && "has-clear",
@@ -104,9 +112,19 @@ export default function Input({
         )}
       </div>
 
-      {hint && !error && (
+      {hint && !error && !warning && !success && (
         <p id={`${name}-hint`} className="hint">
           {hint}
+        </p>
+      )}
+      {!error && warning && (
+        <p id={`${name}-warning`} className="warning-text" role="status">
+          {warning}
+        </p>
+      )}
+      {!error && !warning && success && (
+        <p id={`${name}-success`} className="success-text" role="status">
+          {success}
         </p>
       )}
       {error && (

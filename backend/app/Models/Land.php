@@ -10,7 +10,7 @@ class Land extends Model
     protected $collection = 'lands';
 
     protected $fillable = [
-        'store_id', 'owner_id', 'title', 'district', 'municipality', 'ward', 'area_aana', 'price_per_aana',
+        'store_id', 'owner_id', 'title', 'province', 'district', 'municipality', 'ward', 'tole', 'area_aana', 'price_per_aana',
         'road_ft', 'facing', 'description', 'documents', 'status', 'featured', 'views',
         'sold_to', 'sold_at', 'seeded',
     ];
@@ -19,6 +19,7 @@ class Land extends Model
     {
         return [
             'ward' => 'integer',
+            'tole' => 'string',
             'area_aana' => 'float',
             'price_per_aana' => 'integer',
             'road_ft' => 'integer',

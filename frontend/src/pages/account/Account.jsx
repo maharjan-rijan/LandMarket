@@ -7,6 +7,7 @@ import Alert from "@/components/ui/Alert";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import PasswordFields from "@/components/auth/PasswordFields";
 import AvatarField from "@/components/ui/AvatarField";
 import PageHeader from "@/components/common/PageHeader";
 
@@ -54,7 +55,7 @@ export default function Account() {
         aria-labelledby="photo-h"
       >
         <h2 id="photo-h" style={{ fontSize: "1.2rem" }}>
-          Profile Picture
+          Profile picture
         </h2>
         <AvatarField />
       </section>
@@ -78,7 +79,7 @@ export default function Account() {
             <Alert>{general(profile)}</Alert>
 
             <Input
-              label="Full Name"
+              label="Full name"
               name="name"
               autoComplete="name"
               value={profile.values.name}
@@ -125,7 +126,7 @@ export default function Account() {
           <Alert>{general(password)}</Alert>
 
           <Input
-            label="Current Password"
+            label="Current password"
             name="current_password"
             type="password"
             autoComplete="current-password"
@@ -133,24 +134,12 @@ export default function Account() {
             onChange={password.handleChange}
             error={password.errors.fields.current_password}
           />
-          <Input
-            label="New Password"
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            value={password.values.password}
+          <PasswordFields
+            values={password.values}
             onChange={password.handleChange}
-            error={password.errors.fields.password}
-            hint="At least 8 characters."
-          />
-          <Input
-            label="Confirm New Password"
-            name="password_confirmation"
-            type="password"
-            autoComplete="new-password"
-            value={password.values.password_confirmation}
-            onChange={password.handleChange}
-            error={password.errors.fields.password_confirmation}
+            errors={password.errors.fields}
+            passwordLabel="New password"
+            confirmLabel="Confirm new password"
           />
 
           <div>

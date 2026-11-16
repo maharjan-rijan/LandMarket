@@ -373,6 +373,61 @@ a {
   border-color: var(--terrace);
   box-shadow: 0 0 0 3px rgba(30, 107, 75, 0.18);
 }
+.input-warning {
+  border-color: var(--marigold-dark);
+}
+.input-success {
+  border-color: var(--terrace);
+}
+.warning-text,
+.success-text {
+  margin-top: 0.3rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.warning-text {
+  color: var(--marigold-dark);
+}
+.success-text {
+  color: var(--terrace-dark);
+}
+.strength {
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+.strength-bars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.3rem;
+}
+.strength-bars i {
+  height: 0.3rem;
+  border-radius: 99px;
+  background: var(--line);
+}
+.strength[data-level="1"] .strength-bars i:nth-child(-n + 1) {
+  background: var(--danger);
+}
+.strength[data-level="2"] .strength-bars i:nth-child(-n + 2) {
+  background: var(--marigold);
+}
+.strength[data-level="3"] .strength-bars i {
+  background: var(--terrace);
+}
+.strength-label {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.strength[data-level="1"] strong {
+  color: var(--danger);
+}
+.strength[data-level="2"] strong {
+  color: var(--marigold-dark);
+}
+.strength[data-level="3"] strong {
+  color: var(--terrace-dark);
+}
 .input-error {
   border-color: var(--danger);
 }

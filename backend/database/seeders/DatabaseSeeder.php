@@ -87,7 +87,7 @@ class DatabaseSeeder extends Seeder
         $defs = [
             'himal'    => ['Dipak Himal', 'Himal Land Traders', 'Agency', 'Kathmandu', true, 2014, '+977 9800000011', 'Residential and plotting land across the valley. Every listing has its lalpurja and trace map checked before it goes live.'],
             'patan'    => ['Sabina Tamrakar', 'Patan Plot House', 'Agency', 'Lalitpur', true, 2018, '+977 9800000012', 'Small and mid-size plots in Lalitpur, with a focus on 13 to 20 ft road access.'],
-            'gandaki'  => ['Roshan Gurung', 'Gandaki Realty', 'Agency', 'Pokhara', true, 2016, '+977 9800000013', 'Hill-view and lakeside-side land around Pokhara for homes and homestays.'],
+            'gandaki'  => ['Roshan Gurung', 'Gandaki Realty', 'Agency', 'Kaski', true, 2016, '+977 9800000013', 'Hill-view and lakeside-side land around Pokhara for homes and homestays.'],
             'sunita'   => ['Sunita Shrestha', 'Sunita Shrestha', 'Owner', 'Bhaktapur', false, 2025, '+977 9800000014', 'Selling family land in Bhaktapur directly, no agent fees.'],
             'narayani' => ['Bikash Poudel', 'Narayani Land Co.', 'Agency', 'Chitwan', true, 2012, '+977 9800000015', 'Large plots and commercial land around Bharatpur and Ratnanagar.'],
         ];
@@ -163,8 +163,8 @@ class DatabaseSeeder extends Seeder
             ['mahala',  'patan',    'Quiet 3 aana plot, Mahalaxmi',            'Lalitpur',  'Mahalaxmi',           9,  3,    3600000, 13, 'North',      []],
             ['surya',   'sunita',   '5 aana land in Suryabinayak',             'Bhaktapur', 'Suryabinayak',        10, 5,    2900000, 13, 'East',       ['verified' => false]],
             ['changu',  'sunita',   'Plotted land near Changunarayan',         'Bhaktapur', 'Changunarayan',       2,  8,    1850000, 16, 'South-East', ['verified' => false]],
-            ['pokh1',   'gandaki',  'Hill-view land above Pokhara',            'Pokhara',   'Pokhara Metropolis',  17, 6,    1400000, 20, 'East',       ['featured' => true]],
-            ['pokh2',   'gandaki',  '10 aana with Annapurna view',             'Pokhara',   'Pokhara Metropolis',  11, 10,   1100000, 13, 'North-East', []],
+            ['pokh1',   'gandaki',  'Hill-view land above Pokhara',            'Kaski',     'Pokhara Metropolitan City', 17, 6,    1400000, 20, 'East',       ['featured' => true]],
+            ['pokh2',   'gandaki',  '10 aana with Annapurna view',             'Kaski',     'Pokhara Metropolitan City', 11, 10,   1100000, 13, 'North-East', []],
             ['bharat',  'narayani', '1 ropani commercial land, Bharatpur',     'Chitwan',   'Bharatpur',           5,  16,   650000,  24, 'South',      ['featured' => true]],
             ['ratna',   'narayani', '2 ropani plot in Ratnanagar',             'Chitwan',   'Ratnanagar',          8,  32,   420000,  20, 'West',       []],
             ['nagar',   'himal',    '5 aana land in Nagarjun',                 'Kathmandu', 'Nagarjun',            6,  5,    2400000, 13, 'East',       []],
@@ -174,6 +174,9 @@ class DatabaseSeeder extends Seeder
             ['thimi',   'sunita',   'Plotted land in Madhyapur Thimi',         'Bhaktapur', 'Madhyapur Thimi',     6,  8,    1900000, 16, 'East',       ['views' => 0]],
             ['old',     'narayani', '12 aana in Bharatpur, owner withdrew',    'Chitwan',   'Bharatpur',           9,  12,   700000,  20, 'East',       ['status' => 'closed']],
         ];
+
+        // Province of each district used above (the form and the API now carry it with every land)
+        $provinceOf = ['Kathmandu' => 'Bagmati', 'Lalitpur' => 'Bagmati', 'Bhaktapur' => 'Bagmati', 'Chitwan' => 'Bagmati', 'Kaski' => 'Gandaki'];
 
         $previousOwners = ['Ram Bahadur Thapa', 'Sita Maharjan', 'Binod Karki', 'Anita Gurung', 'Kiran Shrestha', 'Hari Prasad Adhikari'];
 
@@ -186,6 +189,7 @@ class DatabaseSeeder extends Seeder
                 'store_id'       => $store->id,
                 'owner_id'       => $owner->id,
                 'title'          => $title,
+                'province'       => $provinceOf[$district] ?? 'Bagmati',
                 'district'       => $district,
                 'municipality'   => $municipality,
                 'ward'           => $ward,
@@ -195,7 +199,11 @@ class DatabaseSeeder extends Seeder
                 'facing'         => $facing,
                 'description'    => sprintf(
                     '%s aana of land in %s-%d, %s. %d ft road access, marked boundary pillars and a clear lalpurja.',
-                    rtrim(rtrim(number_format($area, 2, '.', ''), '0'), '.'), $municipality, $ward, $district, $road
+                    rtrim(rtrim(number_format($area, 2, '.', ''), '0'), '.'),
+                    $municipality,
+                    $ward,
+                    $district,
+                    $road
                 ),
                 'documents'      => ['Lalpurja', 'Trace map', 'Tax receipt'],
                 'status'         => 'active',
@@ -298,7 +306,7 @@ class DatabaseSeeder extends Seeder
         $rows = [
             ['ram',  'Lalitpur',  4,  3500000, 'Road of at least 20 ft and a clear lalpurja.',  'open'],
             ['mina', 'Kathmandu', 5,  3000000, 'For a family home, north of the ring road.',     'open'],
-            ['anil', 'Pokhara',   6,  1500000, 'Looking for a homestay site with a view.',       'open'],
+            ['anil', 'Kaski',   6,  1500000, 'Looking for a homestay site with a view.',       'open'],
             ['ram',  'Chitwan',   16, 700000,  'Commercial use, main road frontage.',            'closed'],
         ];
 
@@ -331,15 +339,18 @@ class DatabaseSeeder extends Seeder
             ['Role', 'Email', 'Password'],
             array_merge(
                 [['admin', $admin->email, self::PASSWORD]],
-                array_map(fn ($s) => ['seller', $s['user']->email, self::PASSWORD], array_values($sellers)),
-                array_map(fn ($b) => ['buyer', $b->email, self::PASSWORD], array_values($buyers)),
+                array_map(fn($s) => ['seller', $s['user']->email, self::PASSWORD], array_values($sellers)),
+                array_map(fn($b) => ['buyer', $b->email, self::PASSWORD], array_values($buyers)),
             )
         );
 
         $this->command->line(sprintf(
             '%d stores, %d lands, %d inquiries, %d saved, %d demands.',
-            count($sellers), count($lands), Inquiry::where('seeded', true)->count(),
-            SavedLand::where('seeded', true)->count(), Demand::where('seeded', true)->count()
+            count($sellers),
+            count($lands),
+            Inquiry::where('seeded', true)->count(),
+            SavedLand::where('seeded', true)->count(),
+            Demand::where('seeded', true)->count()
         ));
     }
 }

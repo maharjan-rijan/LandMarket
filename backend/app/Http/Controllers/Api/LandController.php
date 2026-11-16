@@ -27,10 +27,21 @@ class LandController extends Controller
             $query->where('district', $district);
         }
 
+        if ($province = $request->query('province')) {
+            $query->where('province', $province);
+        }
+        if ($municipality = $request->query('municipality')) {
+            $query->where('municipality', $municipality);
+        }
+        if ($ward = $request->query('ward')) {
+            $query->where('ward', (int) $ward);
+        }
+
         if ($term = trim((string) $request->query('q', ''))) {
             $re = '/' . preg_quote($term, '/') . '/i';
-            $query->where(fn ($w) => $w
+            $query->where(fn($w) => $w
                 ->where('title', 'regexp', $re)
+                ->orWhere('province', 'regexp', $re)
                 ->orWhere('municipality', 'regexp', $re)
                 ->orWhere('district', 'regexp', $re));
         }

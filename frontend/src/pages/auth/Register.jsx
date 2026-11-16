@@ -5,6 +5,7 @@ import useForm from "@/hooks/useForm";
 import { dashboardPath, ROLES } from "@/lib/roles";
 import { PATHS } from "@/routes/paths";
 import AuthCard from "@/components/auth/AuthCard";
+import PasswordFields from "@/components/auth/PasswordFields";
 import RoleSelector from "@/components/auth/RoleSelector";
 import Alert from "@/components/ui/Alert";
 import Button from "@/components/ui/Button";
@@ -96,24 +97,7 @@ export default function Register() {
           onChange={handleChange}
           error={errors.fields.phone}
         />
-        <Input
-          label="Password"
-          name="password"
-          type="password"
-          autoComplete="new-password"
-          value={values.password}
-          onChange={handleChange}
-          error={errors.fields.password}
-        />
-        <Input
-          label="Confirm password"
-          name="password_confirmation"
-          type="password"
-          autoComplete="new-password"
-          value={values.password_confirmation}
-          onChange={handleChange}
-          error={errors.fields.password_confirmation}
-        />
+        <PasswordFields values={values} onChange={handleChange} errors={errors.fields} />
 
         <Button type="submit" loading={submitting} className="btn-block">
           Create account

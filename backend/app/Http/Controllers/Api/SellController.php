@@ -10,6 +10,7 @@ use App\Models\Land;
 use App\Models\OwnershipTransfer;
 use App\Models\SavedLand;
 use App\Models\Store;
+use App\Support\NepalLocations;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -31,9 +32,15 @@ class SellController extends Controller
 {
     use ApiHelpers;
 
-    private const DISTRICTS = ['Kathmandu', 'Lalitpur', 'Bhaktapur', 'Pokhara', 'Chitwan'];
     private const FACINGS = ['East', 'West', 'North', 'South', 'North-East', 'South-East'];
-    private const DOCUMENTS = ['Lalpurja', 'Trace map', 'Tax receipt', 'Land revenue clearance'];
+    private const DOCUMENTS = [
+        "Lalpurja",
+        "Naksa (trace map)",
+        "Tax receipt (Malpot)",
+        "Charkilla certificate",
+        "Citizenship copy of owner",
+        "Road access letter",
+    ];
 
     // ---------------------------------------------------------------- dashboard
 
@@ -109,7 +116,12 @@ class SellController extends Controller
         $this->authorizeLand($request, $land);
         abort_if($land->status === 'sold', 422, 'A sold listing cannot be edited.');
 
-        $land->fill($request->validate($this->landRules(partial: true)));
+        $data = $request->validate($this->landRules(partial: true));
+        if (array_intersect(array_keys($data), ['province', 'district', 'municipality', 'ward'])) {
+            $this->checkLocation($data, $land);
+        }
+
+        $land->fill($data);
         $land->save();
 
         return response()->json($this->landPayload($land, true));
@@ -268,7 +280,7 @@ class SellController extends Controller
         $data = $request->validate([
             'name'     => ['required', 'string', 'min:2', 'max:255'],
             'type'     => ['required', Rule::in(['Owner', 'Agency'])],
-            'district' => ['required', Rule::in(self::DISTRICTS)],
+            'district' => ['required', 'string', 'max:100'],
             'phone'    => ['nullable', 'string', 'max:20'],
             'email'    => ['nullable', 'email', 'max:255'],
             'about'    => ['nullable', 'string', 'max:1000'],
@@ -297,13 +309,34 @@ class SellController extends Controller
         );
     }
 
+    private function checkLocation(array $data, ?Land $land = null): void
+    {
+        if (! NepalLocations::available()) {
+            return;
+        }
+
+        $loc = [];
+        foreach (['province', 'district', 'municipality', 'ward'] as $key) {
+            $loc[$key] = $data[$key] ?? $land?->{$key};
+        }
+
+        $wards = NepalLocations::wardCount((string) $loc['province'], (string) $loc['district'], (string) $loc['municipality']);
+
+        if ($wards === null) {
+            throw ValidationException::withMessages(['municipality' => 'This municipality does not belong to the selected district.']);
+        }
+        if ((int) $loc['ward'] > $wards) {
+            throw ValidationException::withMessages(['ward' => "This municipality has only {$wards} wards."]);
+        }
+    }
+
     private function landRules(bool $partial = false): array
     {
         $req = $partial ? 'sometimes' : 'required';
 
         return [
             'title'          => [$req, 'string', 'min:5', 'max:150'],
-            'district'       => [$req, Rule::in(self::DISTRICTS)],
+            'district'       => [$req, 'string', 'max:100'],
             'municipality'   => [$req, 'string', 'max:100'],
             'ward'           => [$req, 'integer', 'between:1,35'],
             'area_aana'      => [$req, 'numeric', 'gt:0'],

@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::connection('mongodb')->table('lands', function (Blueprint $collection) {
-            $collection->index(['store_id', 'status']);        // seller dashboard
+        Schema::connection('mongodb')->table('lands', function (Blueprint $collection) {
+            $collection->index(['store_id', 'status']);     // seller dashboard
+            $collection->index(['province', 'municipality', 'ward']);
+            $collection->index(['province', 'municipality', 'ward', 'tole']);
             $collection->index(['status', 'district']);        // public search by district
             $collection->index(['status', 'price_per_aana']);
             $collection->index(['status', 'featured']);
