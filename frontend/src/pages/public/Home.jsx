@@ -198,17 +198,6 @@ export default function Home() {
             <LandCard key={l.id} land={l} />
           ))}
         </div>
-
-        <div
-          className="mt-8 flex flex-wrap gap-2"
-          aria-label="Browse by district"
-        >
-          {counts.map(({ d, n }) => (
-            <Link key={d} to={`${PATHS.lands}?district=${d}`} className="chip">
-              {d} <small className="num">{n}</small>
-            </Link>
-          ))}
-        </div>
       </section>
 
       <section className="section wrap" style={{ paddingBlock: "1rem 3.5rem" }}>

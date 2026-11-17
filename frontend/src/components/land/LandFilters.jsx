@@ -97,7 +97,7 @@ export default function LandFilters({ params, onChange, onReset }) {
 
         <div>
           <Button
-            variant="ghost"
+            variant="accent"
             onClick={onReset}
             disabled={!anyFilter}
             className="btn-block"

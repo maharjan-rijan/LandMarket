@@ -1,15 +1,21 @@
 import { useState } from "react";
 import { useData } from "@/store/DataContext";
-import { DISTRICTS } from "@/data/districts";
-import ChipGroup from "@/components/ui/ChipGroup";
 import EmptyState from "@/components/common/EmptyState";
+import FilterBox from "@/components/common/FilterBox";
+import {
+  matchesLocation,
+  NO_LOCATION,
+} from "@/components/common/LocationFilter";
 import PageHeader from "@/components/common/PageHeader";
 import VendorCard from "@/components/vendor/VendorCard";
 
 export default function Vendors() {
   const { vendors } = useData();
-  const [district, setDistrict] = useState("");
-  const list = vendors.filter((v) => !district || v.district === district);
+  const [loc, setLoc] = useState(NO_LOCATION);
+
+  // A seller (store) has a district, not a municipality, so only province and district filter here.
+  const list = vendors.filter((v) => matchesLocation(v, loc));
+  const filtered = Boolean(loc.province || loc.district);
 
   return (
     <div className="wrap section" style={{ paddingTop: "2rem" }}>
@@ -18,15 +24,13 @@ export default function Vendors() {
         text="Owners and agencies who list land on LandMarket. Each has a store page with all of their plots."
       />
 
-      <ChipGroup
-        label="Filter by district"
+      <FilterBox
+        value={loc}
+        onChange={setLoc}
+        count={list.length}
+        noun="seller"
+        showMunicipality={false}
         className="mb-6"
-        options={[
-          { value: "", label: "All districts" },
-          ...DISTRICTS.map((d) => ({ value: d, label: d })),
-        ]}
-        value={district}
-        onChange={setDistrict}
       />
 
       {list.length ? (
@@ -36,7 +40,11 @@ export default function Vendors() {
           ))}
         </div>
       ) : (
-        <EmptyState title="No sellers in this district yet" />
+        <EmptyState
+          title={
+            filtered ? "No sellers match this filter yet" : "No sellers yet"
+          }
+        />
       )}
     </div>
   );
