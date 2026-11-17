@@ -1,5 +1,5 @@
-# Laravel + MongoDB API for Render (or any Docker host)
-FROM php:8.3-apache
+# Laravel + MongoDB API for Render (or any Docker host). PHP 8.4: composer.lock needs PHP 8.4.1 or newer (symfony/console 8)
+FROM php:8.4-apache
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git unzip libzip-dev libssl-dev libicu-dev \
