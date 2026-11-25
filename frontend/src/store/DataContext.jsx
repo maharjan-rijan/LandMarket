@@ -5,19 +5,6 @@ import { getUserId } from "@/lib/user";
 import { mapDemand, mapInquiry, mapLand, mapPurchase, mapStore, mapUser } from "@/lib/mappers";
 import { composeLands, refreshIsStale, sameData, upsert, without } from "@/lib/dataHelpers";
 
-/*
-  Marketplace data, loaded from the Laravel API.
-
-  Pages read plain arrays (lands, vendors, inquiries ...) and call actions such as
-  createLand() or setLandStatus(). Every action sends one request, then stores the
-  server's answer, so what you see is always what is in MongoDB.
-  If a request fails, the error is shown in a toast (see ApiErrorToast) and the
-  action returns null.
-
-  The page keeps itself up to date: every few seconds (and when you come back to the tab)
-  it quietly asks the API for fresh data, so a new inquiry, listing or reply appears
-  without reloading.
-*/
 const DataContext = createContext(null);
 
 const EMPTY = { lands: [], vendors: [], demands: [], inquiries: [], purchases: [], users: [], saved: [], summary: null, details: {} };

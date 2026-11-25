@@ -74,38 +74,57 @@ export default function AdminOverview() {
                 Manage listings
               </Link>
             </div>
+
             {newest.length ? (
-              <ul
-                className="mt-3"
-                style={{ listStyle: "none", padding: 0, margin: "0.75rem 0 0" }}
+              <div
+                role="region"
+                aria-label="Newest listings, scrollable"
+                tabIndex={0}
+                style={{
+                  maxHeight: "11rem",
+                  overflowY: "auto",
+                  paddingRight: ".5rem",
+                  scrollbarWidth: "thin",
+                  scrollbarColor: "var(--line-strong) transparent",
+                }}
               >
-                {newest.map((l) => (
-                  <li
-                    key={l.id}
-                    className="flex items-start justify-between gap-3"
-                    style={{
-                      padding: ".7rem 0",
-                      borderTop: "1px solid var(--line)",
-                    }}
-                  >
-                    <div className="min-w-0">
-                      <Link
-                        to={PATHS.land(l.id)}
-                        className="font-medium truncate block"
-                      >
-                        {l.title}
-                      </Link>
-                      <p className="text-sm text-muted truncate">
-                        {getVendor(l.vendorId)?.name ?? "Unknown seller"},{" "}
-                        {timeAgo(l.createdAt)}
+                <ul
+                  className="mt-3"
+                  style={{
+                    listStyle: "none",
+                    padding: 0,
+                    margin: "0.75rem 0 0",
+                  }}
+                >
+                  {newest.map((l) => (
+                    <li
+                      key={l.id}
+                      className="flex items-start justify-between gap-3"
+                      style={{
+                        padding: ".7rem 0",
+                        borderTop: "1px solid var(--line)",
+                      }}
+                    >
+                      <div className="min-w-0">
+                        <Link
+                          to={PATHS.land(l.id)}
+                          className="font-medium truncate block"
+                        >
+                          {l.title}
+                        </Link>
+                        <p className="text-sm text-muted truncate">
+                          {getVendor(l.vendorId)?.name ?? "Unknown seller"},{" "}
+                          {timeAgo(l.createdAt)}
+                        </p>
+                      </div>
+
+                      <p className="text-sm shrink-0 num">
+                        {formatNprShort(totalPrice(l))}
                       </p>
-                    </div>
-                    <p className="text-sm shrink-0 num">
-                      {formatNprShort(totalPrice(l))}
-                    </p>
-                  </li>
-                ))}
-              </ul>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ) : (
               <p className="text-muted text-sm mt-3">No listings yet.</p>
             )}
@@ -120,7 +139,7 @@ export default function AdminOverview() {
                 All users
               </Link>
             </div>
-            <BarList items={roles} />
+            <BarList items={roles.filter((role) => role.label !== "Member")} />
           </section>
         </div>
 
@@ -142,14 +161,29 @@ export default function AdminOverview() {
             <h2 id="dist-h" style={{ fontSize: "1.2rem" }} className="mb-4">
               Active listings by district
             </h2>
-            <BarList
-              items={DISTRICTS.map((d) => ({
-                label: d,
-                value: lands.filter(
-                  (l) => l.status === "active" && l.district === d,
-                ).length,
-              }))}
-            />
+
+            {/* Scrolls when the list is taller than the box, so this card stays short */}
+            <div
+              role="region"
+              aria-label="Active listings by district, scrollable"
+              tabIndex={0}
+              style={{
+                maxHeight: "11rem",
+                overflowY: "auto",
+                paddingRight: ".5rem",
+                scrollbarWidth: "thin",
+                scrollbarColor: "var(--line-strong) transparent",
+              }}
+            >
+              <BarList
+                items={DISTRICTS.map((d) => ({
+                  label: d,
+                  value: lands.filter(
+                    (l) => l.status === "active" && l.district === d,
+                  ).length,
+                }))}
+              />
+            </div>
           </section>
         </div>
 
