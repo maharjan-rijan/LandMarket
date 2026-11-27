@@ -11,6 +11,8 @@ import Input from "@/components/ui/Input";
 import EmptyState from "@/components/common/EmptyState";
 import PageHeader from "@/components/common/PageHeader";
 import StatusBadge from "@/components/land/StatusBadge";
+import Pagination from "@/components/ui/Pagination";
+import usePagination from "@/hooks/usePagination";
 
 const BUDGETS = [1000000, 2000000, 3000000, 4000000, 6000000, 10000000];
 
@@ -29,6 +31,8 @@ export default function BuyerDemands() {
   const mine = demands
     .filter((d) => d.buyerId === uid)
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const { items, pager } = usePagination(mine, { pageSize: 8 });
+
   const set = (k) => (e) => setV((p) => ({ ...p, [k]: e.target.value }));
 
   const submit = async (e) => {
@@ -121,62 +125,66 @@ export default function BuyerDemands() {
             Your demands
           </h2>
           {mine.length ? (
-            <ul
-              className="flex flex-col gap-4"
-              style={{ listStyle: "none", padding: 0, margin: 0 }}
-            >
-              {mine.map((d) => {
-                const n = lands.filter((l) => matchesDemand(l, d)).length;
-                const qs = new URLSearchParams({
-                  district: d.district,
-                  maxPrice: d.maxPricePerAana,
-                  minArea: d.minAana,
-                });
-                return (
-                  <li
-                    key={d.id}
-                    className="sheet sheet-pad flex flex-wrap items-start justify-between gap-4"
-                  >
-                    <div className="min-w-0">
-                      <p className="font-semibold">
-                        {formatArea(d.minAana)} or more in {d.district}
-                      </p>
-                      <p className="text-sm text-muted num">
-                        Up to {formatNpr(d.maxPricePerAana)} per aana, posted{" "}
-                        {timeAgo(d.createdAt)}
-                      </p>
-                      {d.note && <p className="text-sm mt-1">{d.note}</p>}
-                      {d.status === "open" && (
-                        <Link
-                          to={`${PATHS.lands}?${qs.toString()}`}
-                          className="link text-sm mt-2 inline-block"
+            <>
+              <ul
+                className="flex flex-col gap-4"
+                style={{ listStyle: "none", padding: 0, margin: 0 }}
+              >
+                {items.map((d) => {
+                  const n = lands.filter((l) => matchesDemand(l, d)).length;
+                  const qs = new URLSearchParams({
+                    district: d.district,
+                    maxPrice: d.maxPricePerAana,
+                    minArea: d.minAana,
+                  });
+                  return (
+                    <li
+                      key={d.id}
+                      className="sheet sheet-pad flex flex-wrap items-start justify-between gap-4"
+                    >
+                      <div className="min-w-0">
+                        <p className="font-semibold">
+                          {formatArea(d.minAana)} or more in {d.district}
+                        </p>
+                        <p className="text-sm text-muted num">
+                          Up to {formatNpr(d.maxPricePerAana)} per aana, posted{" "}
+                          {timeAgo(d.createdAt)}
+                        </p>
+                        {d.note && <p className="text-sm mt-1">{d.note}</p>}
+                        {d.status === "open" && (
+                          <Link
+                            to={`${PATHS.lands}?${qs.toString()}`}
+                            className="link text-sm mt-2 inline-block"
+                          >
+                            {n} {n === 1 ? "plot matches" : "plots match"} right
+                            now
+                          </Link>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <StatusBadge
+                          status={d.status === "open" ? "open" : "closed"}
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setDemandStatus(
+                              d.id,
+                              d.status === "open" ? "closed" : "open",
+                            )
+                          }
                         >
-                          {n} {n === 1 ? "plot matches" : "plots match"} right
-                          now
-                        </Link>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <StatusBadge
-                        status={d.status === "open" ? "open" : "closed"}
-                      />
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          setDemandStatus(
-                            d.id,
-                            d.status === "open" ? "closed" : "open",
-                          )
-                        }
-                      >
-                        {d.status === "open" ? "Close" : "Reopen"}
-                      </Button>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+                          {d.status === "open" ? "Close" : "Reopen"}
+                        </Button>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+
+              <Pagination {...pager} noun="demands" className="mt-4" />
+            </>
           ) : (
             <EmptyState
               title="No demands yet"

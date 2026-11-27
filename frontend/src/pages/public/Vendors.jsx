@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useData } from "@/store/DataContext";
 import EmptyState from "@/components/common/EmptyState";
 import FilterBox from "@/components/common/FilterBox";
+import Pagination from "@/components/ui/Pagination";
+import usePagination from "@/hooks/usePagination";
 import {
   matchesLocation,
   NO_LOCATION,
@@ -15,6 +17,11 @@ export default function Vendors() {
 
   // A seller (store) has a district, not a municipality, so only province and district filter here.
   const list = vendors.filter((v) => matchesLocation(v, loc));
+  const { items, pager } = usePagination(list, {
+    pageSize: 12,
+    resetKey: district,
+  });
+
   const filtered = Boolean(loc.province || loc.district);
 
   return (
@@ -34,11 +41,14 @@ export default function Vendors() {
       />
 
       {list.length ? (
-        <div className="vendor-grid">
-          {list.map((v) => (
-            <VendorCard key={v.id} vendor={v} />
-          ))}
-        </div>
+        <>
+          <div className="vendor-grid">
+            {items.map((v) => (
+              <VendorCard key={v.id} vendor={v} />
+            ))}
+          </div>
+          <Pagination {...pager} noun="sellers" />
+        </>
       ) : (
         <EmptyState
           title={

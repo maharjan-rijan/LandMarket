@@ -12,6 +12,8 @@ import Modal from "@/components/ui/Modal";
 import EmptyState from "@/components/common/EmptyState";
 import PageHeader from "@/components/common/PageHeader";
 import OwnershipChain from "@/components/land/OwnershipChain";
+import Pagination from "@/components/ui/Pagination";
+import usePagination from "@/hooks/usePagination";
 
 // Land this buyer bought. They can sell it on: the new owner is added to the ownership
 // record, and the land stays here as a record of what they once owned.
@@ -25,7 +27,7 @@ export default function BuyerPurchases() {
         .sort((a, b) => String(b.date).localeCompare(String(a.date))),
     [purchases, uid],
   );
-
+const { items, pager } = usePagination(mine, { pageSize: 8 });
   const [sell, setSell] = useState(null); 
   const [record, setRecord] = useState(null); 
   const [name, setName] = useState("");
@@ -89,6 +91,7 @@ export default function BuyerPurchases() {
       />
 
       {mine.length ? (
+        <>
         <div className="table-wrap">
           <table className="table">
             <thead>
@@ -102,7 +105,7 @@ export default function BuyerPurchases() {
               </tr>
             </thead>
             <tbody>
-              {mine.map((p) => {
+              {items.map((p) => {
                 const land = getLand(p.landId);
                 return (
                   <tr key={p.id}>
@@ -151,6 +154,9 @@ export default function BuyerPurchases() {
             </tbody>
           </table>
         </div>
+
+        <Pagination {...pager} noun="purchases" className="mt-4" />
+        </>
       ) : (
         <EmptyState
           title="No purchases yet"

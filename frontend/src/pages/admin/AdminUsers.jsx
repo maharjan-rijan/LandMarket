@@ -11,6 +11,8 @@ import { SearchIcon } from "@/hooks/icons";
 import EmptyState from "@/components/common/EmptyState";
 import PageHeader from "@/components/common/PageHeader";
 import StatusBadge from "@/components/land/StatusBadge";
+import Pagination from "@/components/ui/Pagination";
+import usePagination from "@/hooks/usePagination";
 
 const ROLE_FILTERS = [
   "all",
@@ -33,6 +35,11 @@ export default function AdminUsers() {
       (role === "all" || u.role === role) &&
       (!term || `${u.name} ${u.email}`.toLowerCase().includes(term)),
   );
+  const { items, pager } = usePagination(shown, {
+    pageSize: 5,
+    resetKey: `${role}|${term}`,
+  });
+
   const count = (r) =>
     r === "all" ? users.length : users.filter((u) => u.role === r).length;
 
@@ -70,6 +77,7 @@ export default function AdminUsers() {
       </div>
 
       {shown.length ? (
+        <>
         <div className="table-wrap">
           <table className="table">
             <thead>
@@ -83,7 +91,7 @@ export default function AdminUsers() {
               </tr>
             </thead>
             <tbody>
-              {shown.map((u) => (
+              {items.map((u) => (
                 <tr key={u.id}>
                   <td style={{ minWidth: "12rem" }}>
                     <div className="flex items-center gap-3">
@@ -130,6 +138,8 @@ export default function AdminUsers() {
             </tbody>
           </table>
         </div>
+        <Pagination {...pager} noun="users" className="mt-4" />
+        </>
       ) : (
         <EmptyState
           title={users.length ? "No users match" : "No other users yet"}

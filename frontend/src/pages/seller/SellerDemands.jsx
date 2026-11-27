@@ -5,6 +5,8 @@ import Badge from "@/components/ui/Badge";
 import { PhoneIcon, PinIcon } from "@/hooks/icons";
 import EmptyState from "@/components/common/EmptyState";
 import PageHeader from "@/components/common/PageHeader";
+import Pagination from "@/components/ui/Pagination";
+import usePagination from "@/hooks/usePagination";
 
 // Buyers post what they want; sellers see which of their plots match.
 export default function SellerDemands() {
@@ -13,6 +15,7 @@ export default function SellerDemands() {
   const open = demands
     .filter((d) => d.status === "open")
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const { items, pager } = usePagination(open, { pageSize: 10 });
 
   return (
     <>
@@ -27,6 +30,7 @@ export default function SellerDemands() {
           text="New buyer requests will appear here."
         />
       ) : (
+        <>
         <ul
           className="grid gap-4 md:grid-cols-2"
           style={{ listStyle: "none", padding: 0, margin: 0 }}
@@ -77,6 +81,8 @@ export default function SellerDemands() {
             );
           })}
         </ul>
+        <Pagination {...pager} noun="demands" />
+        </>
       )}
     </>
   );

@@ -12,6 +12,10 @@ import PageHeader from "@/components/common/PageHeader";
 import PlotShape from "@/components/land/PlotShape";
 import StatusBadge from "@/components/land/StatusBadge";
 import Input from "@/components/ui/Input";
+import Pagination from "@/components/ui/Pagination";
+import usePagination from "@/hooks/usePagination";
+
+
 
 const FILTERS = ["all", "active", "sold", "closed"];
 const cap = (s) => s[0].toUpperCase() + s.slice(1);
@@ -36,6 +40,11 @@ export default function AdminListings() {
       `${l.title} ${l.municipality} ${l.district} ${getVendor(l.vendorId)?.name ?? ""}`.toLowerCase();
     return words.every((w) => text.includes(w));
   });
+  const { items, pager } = usePagination(shown, {
+    pageSize: 5,
+    resetKey: `${filter}|${q}`,
+  });
+
   const count = (f) =>
     f === "all" ? lands.length : lands.filter((l) => l.status === f).length;
 
@@ -79,101 +88,104 @@ export default function AdminListings() {
       </div>
 
       {shown.length ? (
-        <div className="table-wrap">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Plot</th>
-                <th>Seller</th>
-                <th>Price</th>
-                <th>Views</th>
-                <th>Listed</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {shown.map((l) => {
-                const vendor = getVendor(l.vendorId);
-                return (
-                  <tr key={l.id}>
-                    <td style={{ minWidth: "18rem" }}>
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="plot-sheet"
-                          style={{
-                            width: "6.5rem",
-                            flex: "none",
-                            border: "1px solid var(--line)",
-                            borderRadius: "var(--r-sm)",
-                            overflow: "hidden",
-                          }}
-                        >
-                          <PlotShape
-                            seed={l.id}
-                            areaAana={l.areaAana}
-                            roadFt={l.roadFt}
-                          />
+        <>
+          <div className="table-wrap">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Plot</th>
+                  <th>Seller</th>
+                  <th>Price</th>
+                  <th>Views</th>
+                  <th>Listed</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((l) => {
+                  const vendor = getVendor(l.vendorId);
+                  return (
+                    <tr key={l.id}>
+                      <td style={{ minWidth: "18rem" }}>
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="plot-sheet"
+                            style={{
+                              width: "6.5rem",
+                              flex: "none",
+                              border: "1px solid var(--line)",
+                              borderRadius: "var(--r-sm)",
+                              overflow: "hidden",
+                            }}
+                          >
+                            <PlotShape
+                              seed={l.id}
+                              areaAana={l.areaAana}
+                              roadFt={l.roadFt}
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <Link to={PATHS.land(l.id)} className="link">
+                              {l.title}
+                            </Link>
+                            <p className="text-sm text-muted">
+                              {l.municipality}-{l.ward}, {l.district}
+                            </p>
+                            <p className="text-sm text-muted num">
+                              {formatArea(l.areaAana)}, {l.roadFt} ft road
+                            </p>
+                          </div>
                         </div>
-                        <div className="min-w-0">
-                          <Link to={PATHS.land(l.id)} className="link">
-                            {l.title}
+                      </td>
+                      <td style={{ minWidth: "9rem" }}>
+                        {vendor ? (
+                          <Link to={PATHS.vendor(vendor.id)} className="link">
+                            {vendor.name}
                           </Link>
-                          <p className="text-sm text-muted">
-                            {l.municipality}-{l.ward}, {l.district}
-                          </p>
-                          <p className="text-sm text-muted num">
-                            {formatArea(l.areaAana)}, {l.roadFt} ft road
-                          </p>
+                        ) : (
+                          <span className="text-muted">Unknown</span>
+                        )}
+                      </td>
+                      <td className="num" style={{ whiteSpace: "nowrap" }}>
+                        {formatNprShort(totalPrice(l))}
+                      </td>
+                      <td className="num">{l.views.toLocaleString()}</td>
+                      <td
+                        className="text-muted text-sm"
+                        style={{ whiteSpace: "nowrap" }}
+                      >
+                        {timeAgo(l.createdAt)}
+                      </td>
+                      <td>
+                        <StatusBadge status={l.status} />
+                      </td>
+                      <td>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            to={PATHS.land(l.id)}
+                          >
+                            View
+                          </Button>
+                          <Button
+                            variant="icon"
+                            aria-label={`Delete ${l.title}`}
+                            onClick={() => setTarget(l)}
+                          >
+                            <TrashIcon size={18} />
+                          </Button>
                         </div>
-                      </div>
-                    </td>
-                    <td style={{ minWidth: "9rem" }}>
-                      {vendor ? (
-                        <Link to={PATHS.vendor(vendor.id)} className="link">
-                          {vendor.name}
-                        </Link>
-                      ) : (
-                        <span className="text-muted">Unknown</span>
-                      )}
-                    </td>
-                    <td className="num" style={{ whiteSpace: "nowrap" }}>
-                      {formatNprShort(totalPrice(l))}
-                    </td>
-                    <td className="num">{l.views.toLocaleString()}</td>
-                    <td
-                      className="text-muted text-sm"
-                      style={{ whiteSpace: "nowrap" }}
-                    >
-                      {timeAgo(l.createdAt)}
-                    </td>
-                    <td>
-                      <StatusBadge status={l.status} />
-                    </td>
-                    <td>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          to={PATHS.land(l.id)}
-                        >
-                          View
-                        </Button>
-                        <Button
-                          variant="icon"
-                          aria-label={`Delete ${l.title}`}
-                          onClick={() => setTarget(l)}
-                        >
-                          <TrashIcon size={18} />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          <Pagination {...pager} noun="listings" className="mt-4" />
+        </>
       ) : (
         <EmptyState
           title={

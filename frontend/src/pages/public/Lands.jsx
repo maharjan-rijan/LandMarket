@@ -8,6 +8,8 @@ import Loader from "@/components/common/Loader";
 import PageHeader from "@/components/common/PageHeader";
 import LandCard from "@/components/land/LandCard";
 import LandFilters from "@/components/land/LandFilters";
+import Pagination from "@/components/ui/Pagination";
+import usePagination from "@/hooks/usePagination";
 
 export default function Lands() {
   const { lands, loading } = useData();
@@ -29,6 +31,12 @@ export default function Lands() {
     () => sortLands(filterLands(lands, filters), filters.sort),
     [lands, params], // eslint-disable-line react-hooks/exhaustive-deps
   );
+  const { page: _page, ...filterOnly } = filters;
+  const { items, pager } = usePagination(results, {
+    pageSize: 6,
+    queryParam: "page",
+    resetKey: JSON.stringify(filterOnly),
+  });
 
   return (
     <div className="wrap section" style={{ paddingTop: "2rem" }}>
@@ -51,11 +59,14 @@ export default function Lands() {
         {loading && !lands.length ? (
           <Loader />
         ) : results.length ? (
+          <>
           <div className="land-grid">
-            {results.map((l) => (
+            {items.map((l) => (
               <LandCard key={l.id} land={l} />
             ))}
           </div>
+          <Pagination {...pager} noun="plots" />
+          </>
         ) : (
           <EmptyState
             title="No land matches these filters"

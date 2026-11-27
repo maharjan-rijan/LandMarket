@@ -6,11 +6,15 @@ import { PhoneIcon, PinIcon } from "@/hooks/icons";
 import EmptyState from "@/components/common/EmptyState";
 import LandCard from "@/components/land/LandCard";
 import NotFound from "@/pages/public/NotFound";
+import Pagination from "@/components/ui/Pagination";
+import usePagination from "@/hooks/usePagination";
 
 export default function VendorProfile() {
   const { id } = useParams();
   const { getVendor, lands } = useData();
   const vendor = getVendor(id);
+  const { items, pager } = usePagination(mine, { pageSize: 12, resetKey: id });
+
   if (!vendor) return <NotFound />;
 
   const mine = lands.filter(
@@ -69,11 +73,14 @@ export default function VendorProfile() {
         <h2>Listings by {vendor.name}</h2>
       </div>
       {mine.length ? (
+        <>
         <div className="land-grid">
-          {mine.map((l) => (
+          {items.map((l) => (
             <LandCard key={l.id} land={l} />
           ))}
         </div>
+         <Pagination {...pager} noun="listings" />
+         </>
       ) : (
         <EmptyState
           title="No active listings"

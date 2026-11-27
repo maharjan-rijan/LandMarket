@@ -8,6 +8,8 @@ import ChipGroup from "@/components/ui/ChipGroup";
 import DropdownMenu from "@/components/ui/DropdownMenu";
 import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
+import Pagination from "@/components/ui/Pagination";
+import usePagination from "@/hooks/usePagination";
 import { PlusIcon } from "@/hooks/icons";
 import EmptyState from "@/components/common/EmptyState";
 import PageHeader from "@/components/common/PageHeader";
@@ -27,6 +29,11 @@ export default function SellerListings() {
     [lands, myStore],
   );
   const shown = mine.filter((l) => filter === "all" || l.status === filter);
+  const { items, pager } = usePagination(shown, {
+    pageSize: 10,
+    resetKey: filter,
+  });
+
   const count = (s) =>
     s === "all" ? mine.length : mine.filter((l) => l.status === s).length;
   const inquiryCount = (id) => inquiries.filter((i) => i.landId === id).length;
@@ -131,7 +138,7 @@ export default function SellerListings() {
                 </tr>
               </thead>
               <tbody>
-                {shown.map((l) => (
+                {items.map((l) => (
                   <tr key={l.id}>
                     <td style={{ minWidth: "12rem" }}>
                       <Link to={PATHS.land(l.id)} className="link">
@@ -171,6 +178,7 @@ export default function SellerListings() {
               </tbody>
             </table>
           </div>
+          <Pagination pager={pager} noun="listings" className="mt-6" />
         </>
       )}
 

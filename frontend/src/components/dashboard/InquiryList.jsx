@@ -10,6 +10,8 @@ import Input from "@/components/ui/Input";
 import Modal from "@/components/ui/Modal";
 import EmptyState from "@/components/common/EmptyState";
 import StatusBadge from "@/components/land/StatusBadge";
+import Pagination from "@/components/ui/Pagination";
+import usePagination from "@/hooks/usePagination";
 
 // Shared by the seller (incoming) and buyer (sent) inquiry pages.
 export default function InquiryList({ mode, items }) {
@@ -22,7 +24,7 @@ export default function InquiryList({ mode, items }) {
     error,
   } = useData();
   const isSeller = mode === "seller";
-
+  const { items: pagedItems, pager } = usePagination(items, { pageSize: 10 });
   const [sale, setSale] = useState(null); // { inquiry, land } waiting for confirmation
 
   // reply box
@@ -224,6 +226,7 @@ export default function InquiryList({ mode, items }) {
           </tbody>
         </table>
       </div>
+      <Pagination {...pager} noun="inquiries" className="mt-4" />
 
       {isSeller && (
         <>

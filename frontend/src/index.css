@@ -1,6 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..700&family=Mukta:wght@400;500;600;700&display=swap");
-@tailwind base;
-@tailwind components;
 @tailwind utilities;
 @import "tailwindcss";
 
@@ -1277,4 +1275,78 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 .vendor-link:hover {
   text-decoration: underline;
+}
+
+/* ---- Pagination ---- */
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin-top: 1.25rem;
+}
+.pager-summary {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.pager-summary strong {
+  color: var(--ink);
+}
+.pager-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pager-btn {
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.pager-btn:hover {
+  border-color: var(--terrace);
+  background: var(--terrace-wash);
+}
+.pager-btn.is-current {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--surface);
+  font-weight: 600;
+  cursor: default;
+}
+.pager-gap {
+  padding: 0 0.2rem;
+  color: var(--muted);
+}
+.pager-of {
+  display: none;
+  font-size: 0.875rem;
+  color: var(--muted);
+  padding: 0 0.4rem;
+}
+@media (max-width: 30rem) {
+  .pager-number,
+  .pager-gap,
+  .pager-list li:has(.is-current) {
+    display: none;
+  }
+  .pager-of {
+    display: block;
+  }
+  .pager {
+    justify-content: center;
+    text-align: center;
+  }
 }
