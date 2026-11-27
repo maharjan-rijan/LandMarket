@@ -9,6 +9,7 @@ import VerifyNotice from "@/components/auth/VerifyNotice";
 import SampleNotice from "@/components/dashboard/SampleNotice";
 import Avatar from "@/components/ui/Avatar";
 import Badge from "@/components/ui/Badge";
+import ChatWidget from "@/components/ui/ChatWidget";
 
 // One layout for every role: the sidebar comes from config/dashboardNav.js.
 export default function DashboardLayout() {
@@ -61,6 +62,7 @@ export default function DashboardLayout() {
           </main>
         </div>
       </div>
+      <ChatWidget />
     </div>
   );
 }

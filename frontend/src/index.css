@@ -1350,3 +1350,107 @@ input[type="number"]::-webkit-inner-spin-button {
     text-align: center;
   }
 }
+
+/* ---- Chat assistant ---- */
+.chat {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+.chat-fab {
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+  border-radius: 999px;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.22);
+}
+.chat-panel {
+  width: min(24rem, calc(100vw - 2rem));
+  height: min(34rem, calc(100vh - 7rem));
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgb(0 0 0 / 0.25);
+  overflow: hidden;
+}
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+.chat-log {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.9rem;
+}
+.chat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 88%;
+}
+.chat-row.user {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+.chat-row.assistant {
+  align-self: flex-start;
+}
+.chat-bubble {
+  margin: 0;
+  padding: 0.55rem 0.8rem;
+  border-radius: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.925rem;
+  background: var(--terrace-wash);
+  color: var(--ink);
+}
+.chat-row.user .chat-bubble {
+  background: var(--ink);
+  color: var(--surface);
+}
+.chat-lands {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.chat-land {
+  display: flex;
+  flex-direction: column;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+}
+.chat-land:hover {
+  border-color: var(--terrace);
+  background: var(--terrace-wash);
+}
+.chat-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  padding: 0.7rem;
+  border-top: 1px solid var(--line);
+}
+@media (max-width: 30rem) {
+  .chat-panel {
+    height: calc(100vh - 6rem);
+  }
+}

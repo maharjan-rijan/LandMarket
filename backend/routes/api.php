@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BuyController;
+use App\Http\Controllers\Api\ChatbotController;
 use App\Http\Controllers\Api\EmailOtpController;
 use App\Http\Controllers\Api\LandController;
 use App\Http\Controllers\Api\PasswordResetController;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 /* ===================================================================== 1. PUBLIC */
 
+Route::post('chat', [ChatbotController::class, 'send'])->middleware('throttle:20,1');
 /* ---------------------------------------------------------------- Auth (guest) */
 
 Route::prefix('auth')->name('auth.')->group(function () {

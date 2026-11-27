@@ -31,8 +31,10 @@ export {
   HiOutlineChevronDown as ChevronDownIcon,
   HiOutlineMail as MailIcon,
   HiOutlineExclamation as WarningIcon,
+  HiOutlineChatAlt2 as ChatIcon,
 } from "react-icons/hi";
 
+export { HiOutlinePaperAirplane as SendIcon } from "react-icons/hi2";
 export {
   HiOutlineUser as UserIcon,
   HiOutlineLockClosed as LockIcon,
